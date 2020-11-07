@@ -38,7 +38,9 @@ class _UsersExploreState extends State<UsersExplore> {
       userData = [];
       var jsonResponse = convert.jsonDecode(response.body);
       for (Map<String, dynamic> item in jsonResponse) {
+        // if (searchController.text in newData)
         userData.add(UserData.fromJson(item));
+        // }
         print('added item');
       }
       setState(() {});
@@ -52,6 +54,10 @@ class _UsersExploreState extends State<UsersExplore> {
 
   @override
   Widget build(BuildContext context) {
+    List<UserData> filtered = userData
+        .where((element) => element.name.contains(searchController.text))
+        .toList();
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Users'),
@@ -63,7 +69,11 @@ class _UsersExploreState extends State<UsersExplore> {
                     type: PageTransitionType.fade, child: CreateUser())),
             child: Icon(Icons.add)),
         body: Column(children: [
-          TextField(
+          TextFormField(
+            controller: searchController,
+            onFieldSubmitted: (String search) {
+              setState(() {});
+            },
             decoration: InputDecoration(
               hintText: 'Search',
               border: InputBorder.none,
@@ -77,9 +87,9 @@ class _UsersExploreState extends State<UsersExplore> {
             child: RefreshIndicator(
               onRefresh: getUserData,
               child: ListView.builder(
-                  itemCount: userData.length,
+                  itemCount: filtered.length,
                   itemBuilder: (context, index) {
-                    return UserItem(data: userData[index]);
+                    return UserItem(data: filtered[index]);
                   }),
             ),
           )
