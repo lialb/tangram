@@ -8,9 +8,9 @@ Group Members:
 * Theodore Li
 
 Tech Stack:
-* Dart - Mobile application requests
-* GoLang - Mobile frontend interfaces
-* Python - General scripting
+* Flutter - Mobile Frontend written in Dart
+* Python - Backend API interfacing with databases
+* AWS - Hosts MySQL and Neo4j databases
 
 Databases:
   * Neo4j - Store posts for the map
