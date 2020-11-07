@@ -29,7 +29,6 @@ try:
 except mysql.connector.Error as e:
     print('Ran into mysql exception: {}'.format(e))
 
-
 @app.route('/')
 def home():
     return 'Connected to server'
@@ -71,9 +70,10 @@ def createUser():
     Body: "Username"
     '''
     username = request.form['Username']
+    desc = request.form['Description']
     try:
         cur = connection.cursor()
-        cur.execute("INSERT INTO users(Username, TotalLikes, ProfilePicture) VALUES ('{}', '{}', {})".format(username, 0, 'NULL'))
+        cur.execute("INSERT INTO users(Username, Descripion, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, desc, 0, 'NULL'))
         connection.commit()
         cur.close()
         return json.dumps([{ 'Insert' : 'Success' }])
@@ -91,27 +91,39 @@ def deleteUser():
         cur.execute("DELETE FROM users where username = '{}'".format(username))
         connection.commit()
         cur.close()
-        return 'Successfully added user: {}'.format(username)
+        return 'Successfully deleted user: {}'.format(username)
     except mysql.connector.Error as e:
         print('Ran into exception: {}'.format(e))
     
+@app.route('/update-description', methods=['PUT'])
+def updateDescription(username):
+    '''
+    Update a user's description (250 characters) based on username
+    '''
+    username = request.form['Username']
+    desc = request.form['Description']
+    try:
+        cur = connection.cursor()
+        cur.execute("UPDATE users SET Description = '{}' WHERE Username = '{}';".format(desc, username))
+        connection.commit()
+        cur.close()
+        return 'Successfully updated user: {}'.format(username)
+    except mysql.connector.Error as e:
+        print('Ran into exception: {}'.format(e))
+
 @app.route('/get-post/<string:PostID>')
 def getPost(PostID):
     '''
-    Get specific post from neo4j
+    Get specific post from neo4jbiggest description for instagram
     '''
-    result = neo4j_api.get_specific_video(PostID)
-    print(result)
-    return json.dumps([result])
+    return neo4j_api.get_specific_video(PostID)
 
 @app.route('/get-all-posts')
 def getAllPosts():
     '''
     Get all posts from neo4j db
     '''
-    result = neo4j_api.get_all_videos()
-    print(result)
-    return json.dumps(result)
+    return neo4j_api.get_all_videos()
 
 @app.route('/create-post', methods=['POST'])
 def createPost():
@@ -128,7 +140,6 @@ def createPost():
     username = request.form['Username']
 
     result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
-    print(result)
     return json.dumps([{'Status' : result }])
 
 @app.route('/delete-post/<string:PostID>', methods=['DELETE'])
