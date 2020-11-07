@@ -3,10 +3,22 @@ import 'package:page_transition/page_transition.dart';
 import 'package:tangram/users_explore.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+class PostData {
+  final String title;
+  final String username;
+  final int likes;
+  final String video;
+
+  PostData(
+      {this.title = 'LOL look at this video!!',
+      this.username = 'theodorespeaks',
+      this.likes = 13,
+      this.video =
+          'https://www.youtube.com/watch?v=xqiPZBZgW9c&ab_channel=Apple'});
+}
+
 class TileVideo extends StatefulWidget {
-  const TileVideo({
-    Key key,
-  }) : super(key: key);
+  const TileVideo({Key key}) : super(key: key);
 
   @override
   _TileVideoState createState() => _TileVideoState();
@@ -14,6 +26,7 @@ class TileVideo extends StatefulWidget {
 
 class _TileVideoState extends State<TileVideo> {
   YoutubePlayerController _controller;
+  PostData data = PostData();
 
   bool _liked = false;
 
@@ -22,8 +35,7 @@ class _TileVideoState extends State<TileVideo> {
     super.initState();
 
     _controller = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(
-          "https://www.youtube.com/watch?v=xqiPZBZgW9c&ab_channel=Apple"),
+      initialVideoId: YoutubePlayer.convertUrlToId(data.video),
       flags: YoutubePlayerFlags(
           autoPlay: true, mute: false, disableDragSeek: true),
     );
@@ -82,13 +94,14 @@ class _TileVideoState extends State<TileVideo> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('LOL look at this funny cat',
+                          Text(data.title,
                               style: TextStyle(color: Colors.white)),
-                          Text('@teddy', style: TextStyle(color: Colors.white)),
+                          Text('@${data.username}',
+                              style: TextStyle(color: Colors.white)),
                         ],
                       ),
                     ),
-                    Text('${145 + (_liked ? 1 : 0)}',
+                    Text('${data.likes + (_liked ? 1 : 0)}',
                         style: TextStyle(color: Colors.white)),
                     Padding(
                       padding: const EdgeInsets.only(right: 32.0),

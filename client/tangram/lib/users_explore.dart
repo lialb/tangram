@@ -5,26 +5,37 @@ import 'dart:convert' as convert;
 import 'package:page_transition/page_transition.dart';
 import 'package:tangram/user_info.dart';
 
+import 'constants.dart';
+
 class UsersExplore extends StatefulWidget {
   @override
   _UsersExploreState createState() => _UsersExploreState();
 }
 
 class _UsersExploreState extends State<UsersExplore> {
+  List<UserData> userData = [];
   @override
   void initState() {
     super.initState();
+
+    getUserData();
   }
 
-  void getUserData() async {
+  Future<void> getUserData() async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
-    var url = 'http://192.168.1.148:5000/get-all-users';
+    var url = '$ip/get-all-users';
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.get(url);
     if (response.statusCode == 200) {
+      userData = [];
       var jsonResponse = convert.jsonDecode(response.body);
+      for (Map<String, dynamic> item in jsonResponse) {
+        userData.add(UserData.fromJson(item));
+        print('added item');
+      }
+      setState(() {});
       print(jsonResponse);
       // var itemCount = jsonResponse['totalItems'];
       // print('Number of books about http: $itemCount.');
@@ -41,17 +52,18 @@ class _UsersExploreState extends State<UsersExplore> {
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: getUserData, child: Icon(Icons.add)),
-        body: Column(
-          children: [
-            UserItem(
-              data: UserData(
-                  name: 'Teddy Li',
-                  username: 'theodorespeaks',
-                  likes: 10,
-                  description: 'hello there its me teddy'),
-            )
-          ],
-        ));
+        body: Column(children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: getUserData,
+              child: ListView.builder(
+                  itemCount: userData.length,
+                  itemBuilder: (context, index) {
+                    return UserItem(data: userData[index]);
+                  }),
+            ),
+          )
+        ]));
   }
 }
 

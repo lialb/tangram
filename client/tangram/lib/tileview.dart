@@ -3,6 +3,11 @@ import 'package:page_transition/page_transition.dart';
 import 'package:tangram/tile_video.dart';
 
 class TileView extends StatefulWidget {
+  final int x;
+  final int y;
+
+  TileView({this.x = 0, this.y = 0});
+
   @override
   _TileViewState createState() => _TileViewState();
 }
@@ -18,7 +23,7 @@ class _TileViewState extends State<TileView> {
       height: MediaQuery.of(context).size.height,
       child: GestureDetector(
           onHorizontalDragUpdate: (details) {
-            if (details.delta.dx > 0) {
+            if (details.delta.dx > 0 && widget.x > 0) {
               transition(context, Direction.LEFT);
               // Right swipe
             } else {
@@ -27,7 +32,7 @@ class _TileViewState extends State<TileView> {
             }
           },
           onVerticalDragUpdate: (details) {
-            if (details.delta.dy > 0) {
+            if (details.delta.dy > 0 && widget.y > 0) {
               // Right swipe
               transition(context, Direction.UP);
             } else {
@@ -47,25 +52,29 @@ class _TileViewState extends State<TileView> {
         Navigator.pushReplacement(
             context,
             PageTransition(
-                type: PageTransitionType.leftToRight, child: TileView()));
+                type: PageTransitionType.leftToRight,
+                child: TileView(x: widget.x - 1, y: widget.y)));
         break;
       case Direction.RIGHT:
         Navigator.pushReplacement(
             context,
             PageTransition(
-                type: PageTransitionType.rightToLeft, child: TileView()));
+                type: PageTransitionType.rightToLeft,
+                child: TileView(x: widget.x + 1, y: widget.y)));
         break;
       case Direction.UP:
         Navigator.pushReplacement(
             context,
             PageTransition(
-                type: PageTransitionType.topToBottom, child: TileView()));
+                type: PageTransitionType.topToBottom,
+                child: TileView(x: widget.x, y: widget.y - 1)));
         break;
       case Direction.DOWN:
         Navigator.pushReplacement(
             context,
             PageTransition(
-                type: PageTransitionType.bottomToTop, child: TileView()));
+                type: PageTransitionType.bottomToTop,
+                child: TileView(x: widget.x, y: widget.y + 1)));
         break;
     }
   }
