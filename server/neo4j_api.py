@@ -24,13 +24,13 @@ def update_post_coordinates(postID, x, y):
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def create_post(postID, text, link, x, y, time, username):
-    query = {"query":"create (v : Video {text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
+    query = {"query":"create(v : Video {text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def get_all_videos():
-    query = {"query":"match (v : Video) return v"}
+    query = {"query":"match(v : Video) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def get_specific_video(postID):
-    query = {"query":"match (v : Video{postID : '" + str(postID) + "'}) return v"}
+    query = {"query":"match(v : Video{postID : '" + str(postID) + "'}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
