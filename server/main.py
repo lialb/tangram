@@ -3,7 +3,7 @@ from flask_cors import CORS
 import config
 import json
 import mysql.connector
-from neo4j import GraphDatabase
+from neo4j_api import query_neo4j
 
 app = Flask(__name__)
 
@@ -23,10 +23,6 @@ except mysql.connector.Error as e:
     print('Ran into mysql exception: {}'.format(e))
 
 try:
-    driver = GraphDatabase.driver(
-        neo4jSecrets['host'], 
-        auth=basic_auth(neo4jSecrets['user'], neo4jSecrets['password'])
-    )
     print('NEO4J CONNECTED')
 except:
     print('Ran into neo4j exception')
