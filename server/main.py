@@ -40,7 +40,7 @@ def getUser(username):
     '''
     cur = connection.cursor()
     try:
-        cur.execute("SELECT * FROM users where username = '{}'".format(username))
+        cur.execute("SELECT * FROM tangram_users where username = '{}'".format(username))
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
@@ -52,11 +52,11 @@ def getUser(username):
 @app.route('/get-all-users')
 def getAllUsers():
     '''
-    Get all users from `users` table from MySQL DB
+    Get all users from `tangram_users` table from MySQL DB
     '''
     cur = connection.cursor()
     try:
-        cur.execute("SELECT * FROM users")
+        cur.execute("SELECT * FROM tangram_users")
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
@@ -77,7 +77,7 @@ def createUser():
 
     cur = connection.cursor()
     try:
-        cur.execute("INSERT INTO users(Username, Name, Description, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, name, desc, 0, 'NULL'))
+        cur.execute("INSERT INTO tangram_users(Username, Name, Description, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, name, desc, 0, 'NULL'))
         connection.commit()
         connection.commit()
         cur.close()
@@ -94,7 +94,7 @@ def deleteUser():
     username = request.form['Username']
     cur = connection.cursor()
     try:
-        cur.execute("DELETE FROM users where username = '{}'".format(username))
+        cur.execute("DELETE FROM tangram_users where username = '{}'".format(username))
         connection.commit()
         cur.close()
         return 'Successfully deleted user: {}'.format(username)
@@ -112,7 +112,7 @@ def updateDescription(username):
 
     cur = connection.cursor()
     try:
-        cur.execute("UPDATE users SET Description = '{}' WHERE Username = '{}';".format(desc, username))
+        cur.execute("UPDATE tangram_users SET Description = '{}' WHERE Username = '{}';".format(desc, username))
         connection.commit()
         cur.close()
         return 'Successfully updated user: {}'.format(username)
