@@ -23,7 +23,6 @@ except mysql.connector.Error as e:
     print('Ran into mysql exception: {}'.format(e))
 
 try:
-    print(query_neo4j(neo4jSecrets.url, neo4jSecrets.user, neo4jSecrets.password, {"query" : "MATCH (n) RETURN n LIMIT 25"}))
     print('NEO4J CONNECTED')
 except:
     print('Ran into neo4j exception')
