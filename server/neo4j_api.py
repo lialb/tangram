@@ -35,6 +35,6 @@ def get_specific_video(postID):
     query = {"query":"match(v : Video{postID : '" + str(postID) + "'}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-def get_video_by_coord(x, y):
-    query = {"query":"match(v : Video{coordX : " + str(x) + ", coordY: " + str(y) + "}) return v"}
+def get_video_by_coordinates(x, y):
+    query = {"query" : "match(v : Video{coordX : " + str(x) + ", coordY : " + str(y) + "}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
