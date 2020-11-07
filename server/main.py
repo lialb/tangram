@@ -38,14 +38,15 @@ def getUser(username):
     '''
     Get specific user based on username from MySQL
     '''
+    cur = connection.cursor()
     try:
-        cur = connection.cursor()
         cur.execute("SELECT * FROM users where username = '{}'".format(username))
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
         return json.dumps(result)
     except mysql.connector.Error as e:
+        cur.close()
         print('Ran into exception: {}'.format(e))
 
 @app.route('/get-all-users')
@@ -53,14 +54,15 @@ def getAllUsers():
     '''
     Get all users from `users` table from MySQL DB
     '''
+    cur = connection.cursor()
     try:
-        cur = connection.cursor()
         cur.execute("SELECT * FROM users")
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
         return json.dumps(result)
     except mysql.connector.Error as e:
+        cur.close()
         print('Ran into exception: {}'.format(e))
 
 @app.route('/create-user', methods=['POST'])
@@ -71,13 +73,17 @@ def createUser():
     '''
     username = request.form['Username']
     desc = request.form['Description']
+    name = request.form['Name']
+
+    cur = connection.cursor()
     try:
-        cur = connection.cursor()
-        cur.execute("INSERT INTO users(Username, Descripion, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, desc, 0, 'NULL'))
+        cur.execute("INSERT INTO users(Username, Name, Description, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, name, desc, 0, 'NULL'))
+        connection.commit()
         connection.commit()
         cur.close()
-        return json.dumps([{ 'Insert' : 'Success' }])
+        return json.dumps([{ 'Status' : 1 }])
     except mysql.connector.Error as e:
+        cur.close()
         print('Ran into exception: {}'.format(e))
     
 @app.route('/delete-user', methods=['DELETE'])
@@ -86,13 +92,14 @@ def deleteUser():
     Delete user from `users` table given the username
     '''
     username = request.form['Username']
+    cur = connection.cursor()
     try:
-        cur = connection.cursor()
         cur.execute("DELETE FROM users where username = '{}'".format(username))
         connection.commit()
         cur.close()
         return 'Successfully deleted user: {}'.format(username)
     except mysql.connector.Error as e:
+        cur.close()
         print('Ran into exception: {}'.format(e))
     
 @app.route('/update-description', methods=['PUT'])
@@ -102,13 +109,15 @@ def updateDescription(username):
     '''
     username = request.form['Username']
     desc = request.form['Description']
+
+    cur = connection.cursor()
     try:
-        cur = connection.cursor()
         cur.execute("UPDATE users SET Description = '{}' WHERE Username = '{}';".format(desc, username))
         connection.commit()
         cur.close()
         return 'Successfully updated user: {}'.format(username)
     except mysql.connector.Error as e:
+        cur.close()
         print('Ran into exception: {}'.format(e))
 
 @app.route('/get-post/<string:PostID>')
