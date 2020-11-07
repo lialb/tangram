@@ -104,12 +104,13 @@ def deleteUser():
         print('Ran into exception: {}'.format(e))
     
 @app.route('/update-description', methods=['PUT'])
-def updateDescription(username):
+def updateDescription():
     '''
     Update a user's description (250 characters) based on username
     '''
-    username = request.form['Username']
-    desc = request.form['Description']
+    print(request.get_json())
+    username = request.get_json()['Username']
+    desc = request.get_json()['Description']
 
     cur = connection.cursor()
     try:

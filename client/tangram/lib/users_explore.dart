@@ -18,6 +18,8 @@ class UsersExplore extends StatefulWidget {
 
 class _UsersExploreState extends State<UsersExplore> {
   List<UserData> userData = [];
+  final searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +63,16 @@ class _UsersExploreState extends State<UsersExplore> {
                     type: PageTransitionType.fade, child: CreateUser())),
             child: Icon(Icons.add)),
         body: Column(children: [
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Search',
+              border: InputBorder.none,
+              contentPadding:
+                  // TODO: fix alignment
+                  EdgeInsets.only(left: 10, top: 12, bottom: 5),
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: getUserData,
