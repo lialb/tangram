@@ -7,7 +7,7 @@ import config
 import json
 import mysql.connector
 import secrets
-from neo4j_api import * 
+import neo4j_api
 
 app = Flask(__name__)
 
@@ -95,16 +95,23 @@ def deleteUser():
     except mysql.connector.Error as e:
         print('Ran into exception: {}'.format(e))
     
-@app.route('/get-post/<string:PostId>')
-def getPost(PostId):
-    pass
+@app.route('/get-post/<string:PostID>')
+def getPost(PostID):
+    '''
+    Get specific post from neo4j
+    '''
+    result = neo4j_api.get_specific_video(PostID)
+    print(result)
+    return json.dumps([result])
 
 @app.route('/get-all-posts')
 def getAllPosts():
     '''
     Get all posts from neo4j db
     '''
-    pass
+    result = neo4j_api.get_all_videos()
+    print(result)
+    return json.dumps(result)
 
 @app.route('/create-post', methods=['POST'])
 def createPost():
@@ -125,7 +132,10 @@ def createPost():
     return json.dumps([{'Status' : result }])
 
 @app.route('/delete-post/<string:PostID>', methods=['DELETE'])
-def createPost(PostID):
+def deletePost(PostID):
+    '''
+    Delete specific post from neo4j based on PostID
+    '''
     result = neo4j_api.delete_post(PostID)
     print(result)
     return json.dumps([{'Status' : result}])
@@ -133,12 +143,18 @@ def createPost(PostID):
 
 @app.route('/update-post-likes/<string:PostID>', methods=['PUT'])
 def updatePostLikes(PostID):
+    '''
+    Update the likes on a post based on PostID
+    '''
     likes = request.form['totalLikes']
     result = neo4j_api.delete_post(PostID, likes)
     return json.dumps([{'Status' : result}])
 
 @app.route('/update-post-title/<string:PostID>', methods=['PUT'])
 def updatePostTitle(PostID):
+    '''
+    Update the title on a post based on PostID
+    '''
     title = request.form['title']
     result = neo4j_api.updatePostTitle(PostID, title)
     print(result)
@@ -146,6 +162,9 @@ def updatePostTitle(PostID):
 
 @app.route('/update-post-coordinates/<string:PostID>', methods=['PUT'])
 def updatePostCoordinates(PostID):
+    '''
+    Update the x and y coordinates on a post based on PostID
+    '''
     x = request.form['XCoordinate']
     y = request.form['YCoordinate']
     result = neo4j_api.update_post_coordinates(PostID, x, y)
@@ -153,13 +172,5 @@ def updatePostCoordinates(PostID):
     return json.dumps([{'Status' : result}])
     
 
-
-
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-
-
-
-
