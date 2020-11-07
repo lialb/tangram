@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:tangram/users_explore.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class TileVideo extends StatefulWidget {
@@ -58,6 +60,17 @@ class _TileVideoState extends State<TileVideo> {
                 ),
               ),
             ),
+            Positioned(
+                right: 16,
+                top: 64,
+                child: IconButton(
+                  icon: Icon(Icons.people, color: Colors.white),
+                  onPressed: () => Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.fade,
+                          child: UsersExplore())),
+                )),
             Positioned(
               bottom: 16,
               left: 16,
