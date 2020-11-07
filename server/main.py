@@ -6,8 +6,8 @@ from flask_cors import CORS
 import config
 import json
 import mysql.connector
-from neo4j import GraphDatabase
 import secrets
+from neo4j_api import * 
 
 app = Flask(__name__)
 
@@ -29,14 +29,6 @@ try:
 except mysql.connector.Error as e:
     print('Ran into mysql exception: {}'.format(e))
 
-try:
-    driver = GraphDatabase.driver(
-        neo4jSecrets['host'], 
-        auth=basic_auth(neo4jSecrets['user'], neo4jSecrets['password'])
-    )
-    print('NEO4J CONNECTED')
-except:
-    print('Ran into neo4j exception')
 
 @app.route('/')
 def home():
@@ -121,27 +113,46 @@ def createPost():
     Params: text, videoURL, XCoordinate, YCoordinate, Timestamp, Username
     '''
     postID = secrets.token_hex(nbytes=16) # random hash for unique PostIDs
-    pass
+    text = request.form['text']
+    videoURL = request.form['videoURL']
+    XCoordinate = request.form['XCoordinate']
+    YCoordinate = request.form['YCoordinate']
+    TimeStamp = request.form['Timestamp']
+    username = request.form['Username']
+
+    result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
+    print(result)
+    return json.dumps([{'Status' : result }])
 
 @app.route('/delete-post/<string:PostID>', methods=['DELETE'])
 def createPost(PostID):
-    pass
+    result = neo4j_api.delete_post(PostID)
+    print(result)
+    return json.dumps([{'Status' : result}])
+    
 
 @app.route('/update-post-likes/<string:PostID>', methods=['PUT'])
 def updatePostLikes(PostID):
     likes = request.form['totalLikes']
-    pass
+    result = neo4j_api.delete_post(PostID, likes)
+    return json.dumps([{'Status' : result}])
 
 @app.route('/update-post-title/<string:PostID>', methods=['PUT'])
 def updatePostTitle(PostID):
     title = request.form['title']
-    pass
+    result = neo4j_api.updatePostTitle(PostID, title)
+    print(result)
+    return json.dumps([{'Status' : result}])
 
 @app.route('/update-post-coordinates/<string:PostID>', methods=['PUT'])
 def updatePostCoordinates(PostID):
     x = request.form['XCoordinate']
     y = request.form['YCoordinate']
-    pass
+    result = neo4j_api.update_post_coordinates(PostID, x, y)
+    print(result)
+    return json.dumps([{'Status' : result}])
+    
+
 
 
 
