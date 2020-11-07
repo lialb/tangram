@@ -1,4 +1,5 @@
 import json
+import names
 import random
 import requests
 
@@ -31,7 +32,7 @@ def addRandomUsers(len, num, currUsers):
             toAdd += (chr(random_integer))
         if (toAdd not in currUsers):
             i += 1;
-            requests.post(CREATE_USER, data = {'Username' : toAdd})
+            requests.post(CREATE_USER, data = {'Username' : toAdd, 'name' : names.get_full_name(), 'description' : "I love Tangram! It's the best!"})
             currUsers.add(toAdd)
             print(toAdd + 'added to DB\n')
         else:
@@ -46,6 +47,6 @@ def addRandomUsers(len, num, currUsers):
 x = requests.get(GET_ALL_USERS)
 s = convertUsersToSet(x)
 
-addRandomUsers(4, 19, s)
+addRandomUsers(4, 20, s)
 
 print(requests.get(GET_ALL_USERS).text)
