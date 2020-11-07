@@ -100,18 +100,14 @@ def getPost(PostID):
     '''
     Get specific post from neo4j
     '''
-    result = neo4j_api.get_specific_video(PostID)
-    print(result)
-    return json.dumps([result])
+    return neo4j_api.get_specific_video(PostID)
 
 @app.route('/get-all-posts')
 def getAllPosts():
     '''
     Get all posts from neo4j db
     '''
-    result = neo4j_api.get_all_videos()
-    print(result)
-    return json.dumps(result)
+    return neo4j_api.get_all_videos()
 
 @app.route('/create-post', methods=['POST'])
 def createPost():
@@ -128,7 +124,6 @@ def createPost():
     username = request.form['Username']
 
     result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
-    print(result)
     return json.dumps([{'Status' : result }])
 
 @app.route('/delete-post/<string:PostID>', methods=['DELETE'])
