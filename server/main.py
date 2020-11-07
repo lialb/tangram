@@ -150,12 +150,12 @@ def createPost():
     Params: text, videoURL, XCoordinate, YCoordinate, Timestamp, Username
     '''
     postID = secrets.token_hex(nbytes=16) # random hash for unique PostIDs
-    text = request.form['text']
-    videoURL = request.form['videoURL']
-    XCoordinate = request.form['XCoordinate']
-    YCoordinate = request.form['YCoordinate']
-    TimeStamp = request.form['Timestamp']
-    username = request.form['Username']
+    text = request.get_json()['text']
+    videoURL = request.get_json()['videoURL']
+    XCoordinate = request.get_json()['XCoordinate']
+    YCoordinate = request.get_json()['YCoordinate']
+    TimeStamp = request.get_json()['Timestamp']
+    username = request.get_json()['Username']
 
     result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
     return json.dumps([{'Status' : result }])

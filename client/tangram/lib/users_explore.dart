@@ -55,7 +55,9 @@ class _UsersExploreState extends State<UsersExplore> {
   @override
   Widget build(BuildContext context) {
     List<UserData> filtered = userData
-        .where((element) => element.name.contains(searchController.text))
+        .where((element) =>
+            element.name.contains(searchController.text) &&
+            element.username.contains(searchController.text))
         .toList();
 
     return Scaffold(
