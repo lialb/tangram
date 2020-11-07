@@ -1,0 +1,4 @@
+Flask==1.1.1
+Flask-Cors==3.0.8
+mysql-connector-python==8.0.22
+neo4j==4.1.1
