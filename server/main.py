@@ -123,9 +123,16 @@ def updateDescription(username):
 @app.route('/get-post/<string:PostID>')
 def getPost(PostID):
     '''
-    Get specific post from neo4jbiggest description for instagram
+    Get specific post from neo4j
     '''
     return neo4j_api.get_specific_video(PostID)
+
+@app.route('/get-post-by-coordinates/<string:x>/<string:y>')
+def getPostByCoordinate(x, y):
+    '''
+    Get specific post from neo4j based on coordinate
+    '''
+    return neo4j_api.get_video_by_coordinates(x, y)
 
 @app.route('/get-all-posts')
 def getAllPosts():
