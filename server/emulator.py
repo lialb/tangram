@@ -32,9 +32,9 @@ def addRandomUsers(len, num, currUsers):
             toAdd += (chr(random_integer))
         if (toAdd not in currUsers):
             i += 1;
-            requests.post(CREATE_USER, data = {'Username' : toAdd, 'name' : names.get_full_name(), 'description' : "I love Tangram! It's the best!"})
+            requests.post(CREATE_USER, data = {'Username' : toAdd, 'Name' : names.get_full_name(), 'Description' : "I love Tangram! It's the best!"})
             currUsers.add(toAdd)
-            print(toAdd + 'added to DB\n')
+            print(toAdd + ' added to DB\n')
         else:
             fails += 1
             if (fails >= 100000):
