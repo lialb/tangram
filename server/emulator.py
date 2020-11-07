@@ -32,6 +32,7 @@ def addRandomUsers(len, num, currUsers):
         if (toAdd not in currUsers):
             i += 1;
             requests.post(CREATE_USER, data = {'Username' : toAdd})
+            currUsers.add(toAdd)
             print(toAdd + 'added to DB\n')
         else:
             fails += 1
@@ -42,9 +43,9 @@ def addRandomUsers(len, num, currUsers):
 
 #r = requests.post('http://localhost:5000/create-user', data={ 'Username' : 'Albert' })
 
-#x = requests.get(GET_ALL_USERS)
-#s = convertUsersToSet(x)
-#
-## addRandomUsers(4, 1, s)
-#
-#print(requests.get(GET_ALL_USERS).text)
+x = requests.get(GET_ALL_USERS)
+s = convertUsersToSet(x)
+
+addRandomUsers(4, 19, s)
+
+print(requests.get(GET_ALL_USERS).text)
