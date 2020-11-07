@@ -77,7 +77,7 @@ def createUser():
 
     cur = connection.cursor()
     try:
-        cur.execute("INSERT INTO tangram_users(Username, Name, Description, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {})".format(username, name, desc, 0, 'NULL'))
+        cur.execute("INSERT INTO tangram_users(Username, Name, Description, TotalLikes, ProfilePicture) VALUES ('{}', '{}', '{}', {}, {})".format(username, name, desc, 0, 'NULL'))
         connection.commit()
         connection.commit()
         cur.close()
