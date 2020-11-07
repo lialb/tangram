@@ -71,9 +71,10 @@ def createUser():
     Create a user in the users table in MySQL.
     Body: "Username"
     '''
-    username = request.form['Username']
-    desc = request.form['Description']
-    name = request.form['Name']
+    print(request.get_json())
+    username = request.get_json()['Username']
+    desc = request.get_json()['Description']
+    name = request.get_json()['Name']
 
     cur = connection.cursor()
     try:
@@ -91,7 +92,7 @@ def deleteUser():
     '''
     Delete user from `users` table given the username
     '''
-    username = request.form['Username']
+    username = request.args['Username']
     cur = connection.cursor()
     try:
         cur.execute("DELETE FROM tangram_users where username = '{}'".format(username))
