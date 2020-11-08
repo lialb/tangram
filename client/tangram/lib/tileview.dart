@@ -23,6 +23,7 @@ class _TileViewState extends State<TileView> {
       height: MediaQuery.of(context).size.height,
       child: GestureDetector(
           onHorizontalDragUpdate: (details) {
+            print('horizontal');
             if (details.delta.dx > 0 && widget.x > 0) {
               transition(context, Direction.LEFT);
               // Right swipe
@@ -32,6 +33,7 @@ class _TileViewState extends State<TileView> {
             }
           },
           onVerticalDragUpdate: (details) {
+            print('vertical');
             if (details.delta.dy > 0 && widget.y > 0) {
               // Right swipe
               transition(context, Direction.UP);
@@ -40,7 +42,7 @@ class _TileViewState extends State<TileView> {
               transition(context, Direction.DOWN);
             }
           },
-          child: TileVideo()),
+          child: TileVideo(x: widget.x, y: widget.y)),
     ));
   }
 

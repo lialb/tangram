@@ -1,9 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:tangram/users_explore.dart';
 
-class UserInfo extends StatelessWidget {
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+
+import 'constants.dart';
+
+class UserInfo extends StatefulWidget {
   UserData data;
+
   UserInfo({this.data});
+
+  @override
+  _UserInfoState createState() => _UserInfoState();
+}
+
+class _UserInfoState extends State<UserInfo> {
+  bool edit = false;
+  final descriptionController = TextEditingController();
+
+  Future<void> updateDescription(String description) async {
+    // This example uses the Google Books API to search for books about http.
+    // https://developers.google.com/books/docs/overview
+    var url =
+        '$ip/update-description?Username=${widget.data.username}&Description=$description';
+
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.put(url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: convert.jsonEncode(
+            {'Username': widget.data.username, 'Description': description}));
+    if (response.statusCode == 200) {
+      // var jsonResponse = convert.jsonDecode(response.body);
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    descriptionController.text = widget.data.description;
+  }
+
+  @override
+  void dispase() {
+    super.dispose();
+    descriptionController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,22 +57,55 @@ class UserInfo extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.black,
-        ),
-        body: Column(
-          children: [
-            ProfileHeader(
-              name: data.name,
-              username: data.username,
-            ),
-            SizedBox(height: 100),
-            SizedBox(
-              height: 400,
-              child: Text(
-                data.description,
-                style: TextStyle(fontSize: 16),
-              ),
+          actions: [
+            IconButton(
+              icon: Icon(edit ? Icons.check : Icons.edit),
+              onPressed: () {
+                if (edit) {
+                  updateDescription(descriptionController.text);
+                }
+                setState(() {
+                  edit = !edit;
+                });
+              },
             )
           ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              ProfileHeader(
+                name: widget.data.name,
+                username: widget.data.username,
+              ),
+              SizedBox(height: 100),
+              SizedBox(
+                height: 400,
+                child: edit
+                    ? TextFormField(
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter some text';
+                          }
+                          return null;
+                        },
+                        controller: descriptionController,
+                        decoration: InputDecoration(
+                          // labelText: 'Name',
+                          hintText: 'Add a new description!',
+                          contentPadding:
+                              // TODO: fix alignment
+                              EdgeInsets.only(left: 10, top: 12, bottom: 5),
+                        ),
+                      )
+                    : Text(
+                        descriptionController.text,
+                        style: TextStyle(fontSize: 16),
+                      ),
+              )
+            ],
+          ),
         ));
   }
 }

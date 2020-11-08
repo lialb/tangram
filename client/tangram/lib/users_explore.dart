@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -6,6 +9,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:tangram/user_info.dart';
 
 import 'constants.dart';
+import 'create_user.dart';
 
 class UsersExplore extends StatefulWidget {
   @override
@@ -14,6 +18,8 @@ class UsersExplore extends StatefulWidget {
 
 class _UsersExploreState extends State<UsersExplore> {
   List<UserData> userData = [];
+  final searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +38,9 @@ class _UsersExploreState extends State<UsersExplore> {
       userData = [];
       var jsonResponse = convert.jsonDecode(response.body);
       for (Map<String, dynamic> item in jsonResponse) {
+        // if (searchController.text in newData)
         userData.add(UserData.fromJson(item));
+        // }
         print('added item');
       }
       setState(() {});
@@ -46,20 +54,44 @@ class _UsersExploreState extends State<UsersExplore> {
 
   @override
   Widget build(BuildContext context) {
+    List<UserData> filtered = userData
+        .where((element) =>
+            element.name.contains(searchController.text) &&
+            element.username.contains(searchController.text))
+        .toList();
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Users'),
         ),
         floatingActionButton: FloatingActionButton(
-            onPressed: getUserData, child: Icon(Icons.add)),
+            onPressed: () => Navigator.push(
+                context,
+                PageTransition(
+                    type: PageTransitionType.fade, child: CreateUser())),
+            child: Icon(Icons.add)),
         body: Column(children: [
+          TextFormField(
+            controller: searchController,
+            onFieldSubmitted: (String search) {
+              setState(() {});
+            },
+            decoration: InputDecoration(
+              hintText: 'Search',
+              border: InputBorder.none,
+              contentPadding:
+                  // TODO: fix alignment
+                  EdgeInsets.only(left: 10, top: 12, bottom: 5),
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: getUserData,
               child: ListView.builder(
-                  itemCount: userData.length,
+                  itemCount: filtered.length,
                   itemBuilder: (context, index) {
-                    return UserItem(data: userData[index]);
+                    return UserItem(data: filtered[index]);
                   }),
             ),
           )
@@ -86,34 +118,54 @@ class UserItem extends StatelessWidget {
   final UserData data;
   const UserItem({Key key, this.data}) : super(key: key);
 
+  Future<void> deleteUser(String username) async {
+    var url = Uri.parse('$ip/delete-user?Username=$username');
+    var request = http.Request("DELETE", url);
+    request.send();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            PageTransition(
-                type: PageTransitionType.fade, child: UserInfo(data: data)));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.person, color: Colors.white),
-            ),
-            SizedBox(width: 16.0),
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(data.name),
-                Text('@${data.username}'),
-              ],
-            )),
-            Icon(Icons.chevron_right)
-          ],
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: .25,
+      secondaryActions: [
+        IconSlideAction(
+          caption: 'Delete',
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () {
+            deleteUser(data.username);
+          },
+        )
+      ],
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              PageTransition(
+                  type: PageTransitionType.fade, child: UserInfo(data: data)));
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.person, color: Colors.white),
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(data.name),
+                  Text('@${data.username}'),
+                ],
+              )),
+              Icon(Icons.chevron_right)
+            ],
+          ),
         ),
       ),
     );

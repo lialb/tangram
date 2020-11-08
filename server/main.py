@@ -107,9 +107,10 @@ def createUser():
     Create a user in the users table in MySQL.
     Body: "Username"
     '''
-    username = request.form['Username']
-    desc = request.form['Description']
-    name = request.form['Name']
+    print(request.get_json())
+    username = request.get_json()['Username']
+    desc = request.get_json()['Description']
+    name = request.get_json()['Name']
 
     cur = connection.cursor()
     try:
@@ -127,7 +128,7 @@ def deleteUser():
     '''
     Delete user from `users` table given the username
     '''
-    username = request.form['Username']
+    username = request.args['Username']
     cur = connection.cursor()
     try:
         cur.execute("DELETE FROM tangram_users where username = '{}'".format(username))
@@ -139,12 +140,13 @@ def deleteUser():
         print('Ran into exception: {}'.format(e))
     
 @app.route('/update-description', methods=['PUT'])
-def updateDescription(username):
+def updateDescription():
     '''
     Update a user's description (250 characters) based on username
     '''
-    username = request.form['Username']
-    desc = request.form['Description']
+    print(request.get_json())
+    username = request.get_json()['Username']
+    desc = request.get_json()['Description']
 
     cur = connection.cursor()
     try:
@@ -184,12 +186,12 @@ def createPost():
     Params: text, videoURL, XCoordinate, YCoordinate, Timestamp, Username
     '''
     postID = secrets.token_hex(nbytes=16) # random hash for unique PostIDs
-    text = request.form['text']
-    videoURL = request.form['videoURL']
-    XCoordinate = request.form['XCoordinate']
-    YCoordinate = request.form['YCoordinate']
-    TimeStamp = request.form['Timestamp']
-    username = request.form['Username']
+    text = request.get_json()['text']
+    videoURL = request.get_json()['videoURL']
+    XCoordinate = request.get_json()['XCoordinate']
+    YCoordinate = request.get_json()['YCoordinate']
+    TimeStamp = request.get_json()['Timestamp']
+    username = request.get_json()['Username']
 
     result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
     return json.dumps([{'Status' : result }])
