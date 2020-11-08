@@ -33,6 +33,42 @@ except mysql.connector.Error as e:
 def home():
     return 'Connected to server'
 
+@app.route('/max-likes')
+def userWithMostLikes():
+    '''
+    Select user with most likes
+    '''
+    cur = connection.cursor()
+    try:
+        cur.execute(
+            'SELECT u.Username, u.totLikes FROM (SELECT x.Username, count(x.likes) AS totLikes FROM tangram_users JOIN tangram_posts AS x ON tangram_users.Username = x.Username GROUP BY x.Username) AS u HAVING u.totLikes = max(u.totLikes) ORDER BY u.totLikes DESC'
+        )
+        headers = [x[0] for x in cur.description]
+        result = [dict(zip(headers, row)) for row in cur.fetchall()]
+        cur.close()
+        return json.dumps(result)
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
+
+@app.route('/average-users')
+def usersWithPopularPosts():
+    '''
+    Select users with average likes of >= 5
+    '''
+    cur = connection.cursor()
+    try:
+        cur.execute(
+           'SELECT u.Username, count(p.Likes) AS totLikes FROM tangram_users u JOIN tangram_posts p ON u.Username = p.Username GROUP BY u.Username HAVING avg(p.likes) >= 5 ORDER BY totLikes DESC' 
+        )
+        headers = [x[0] for x in cur.description]
+        result = [dict(zip(headers, row)) for row in cur.fetchall()]
+        cur.close()
+        return json.dumps(result)
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
+
 @app.route('/get-user/<string:username>')
 def getUser(username):
     '''
