@@ -56,7 +56,8 @@ class _TileVideoState extends State<TileVideo> {
   @override
   void initState() {
     super.initState();
-    getData();
+    // TODO: uncomment
+    // getData();
   }
 
   Future<void> getData() async {
@@ -95,7 +96,7 @@ class _TileVideoState extends State<TileVideo> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () => _controller.play(),
         child: isForm
             ? buildForm()
