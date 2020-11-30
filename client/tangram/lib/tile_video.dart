@@ -204,6 +204,8 @@ class _TileVideoState extends State<TileVideo> {
   SafeArea buildForm() {
     return SafeArea(
       child: Container(
+        width: double.infinity,
+        height: double.infinity,
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,

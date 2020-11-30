@@ -33,22 +33,28 @@ class _UsersExploreState extends State<UsersExplore> {
     var url = '$ip/get-all-users';
 
     // Await the http get response, then decode the json-formatted response.
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      userData = [];
-      var jsonResponse = convert.jsonDecode(response.body);
-      for (Map<String, dynamic> item in jsonResponse) {
-        // if (searchController.text in newData)
-        userData.add(UserData.fromJson(item));
-        // }
-        print('added item');
+    try {
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        userData = [];
+        var jsonResponse = convert.jsonDecode(response.body);
+        for (Map<String, dynamic> item in jsonResponse) {
+          // if (searchController.text in newData)
+          userData.add(UserData.fromJson(item));
+          // }
+          print('added item');
+        }
+        setState(() {});
+        print(jsonResponse);
+        // var itemCount = jsonResponse['totalItems'];
+        // print('Number of books about http: $itemCount.');
+      } else {
+        print('Request failed with status: ${response.statusCode}.');
       }
-      setState(() {});
-      print(jsonResponse);
-      // var itemCount = jsonResponse['totalItems'];
-      // print('Number of books about http: $itemCount.');
-    } else {
-      print('Request failed with status: ${response.statusCode}.');
+    } catch (SocketException) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Unable to connect to server'),
+      ));
     }
   }
 
