@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:tangram/map_view.dart';
 import 'package:tangram/tileview.dart';
+import 'package:tangram/user_info.dart';
 import 'package:tangram/users_explore.dart';
 
 void main() {
@@ -18,8 +20,25 @@ class _MyAppState extends State<MyApp> {
   List<Widget> children = [
     MapView(),
     // TileView(),
-    UsersExplore(),
+    UserInfo(
+      data: UserData(),
+      isUser: true,
+    ),
   ];
+
+  // final pages = [
+  //   Center(
+  //     child: Text('Tangram'),
+  //   ),
+  //   Column(
+  //     children: [
+  //       Text('Mosaic Based'),
+  //       Text('Intimate'),
+  //       Text('Viral'),
+  //       Text('No recommendation algorithm'),
+  //     ],
+  //   )
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +71,9 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         body: children[_selectedIndex],
+        // body: Builder(
+        //   builder: (context) => LiquidSwipe(pages: pages),
+        // ),
       ),
     );
   }
