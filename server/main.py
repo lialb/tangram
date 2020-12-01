@@ -76,11 +76,23 @@ def getUser(username):
     '''
     cur = connection.cursor()
     try:
-        cur.execute("SELECT * FROM tangram_users where username = '{}'".format(username))
+        cur.execute("SELECT * FROM tangram_users, ((select distinct U2.user1 AS Friends FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}') UNION (select distinct U1.user2 AS Friends FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}')) AS C WHERE tangram_users.Username = '{}'".format(username, username, username))
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
-        return json.dumps(result)
+        arr = []
+        for i in range(len(result)):
+            arr.append(result[i]['Friends'])
+        reformatted = {
+            "Username" : result[0]['Username'],
+            "Name" : result[0]['Name'],
+            "TotalLikes" : result[0]['TotalLikes'],
+            "ProfilePicture" : result[0]['ProfilePicture'],
+            "Description" : result[0]['Description'],
+            "Friends" : arr
+
+        }
+        return json.dumps(reformatted)
     except mysql.connector.Error as e:
         cur.close()
         print('Ran into exception: {}'.format(e))
