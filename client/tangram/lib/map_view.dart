@@ -10,17 +10,36 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   List<Widget> _grid = [];
+  bool _refresh = false;
 
   void launchTileView(BuildContext context) {
     Navigator.of(context).push(ScaleRoute(page: TileView()));
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    buildGrid();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.refresh),
+        onPressed: () {
+          setState(() {
+            _refresh = !_refresh;
+          });
+        },
+        backgroundColor: _refresh ? Colors.black : Colors.yellow,
+        child: _refresh
+            ? SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(),
+              )
+            : Icon(Icons.refresh),
       ),
       body: Container(
         color: Colors.grey,
@@ -36,7 +55,6 @@ class _MapViewState extends State<MapView> {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                 ),
-                Pixel(x: 108, y: 40),
                 ..._grid,
               ]),
             )),
@@ -45,12 +63,40 @@ class _MapViewState extends State<MapView> {
   }
 
   void buildGrid() {
-    _grid = [];
-    for (int i = 0; i < 170; i++) {
-      for (int j = 0; j < 90; j++) {
-        _grid.add(Pixel(x: i, y: j));
-      }
-    }
+    _grid = [
+      Pixel(x: 108, y: 40),
+      Pixel(
+        x: 107,
+        y: 40,
+        color: Colors.yellow.withAlpha(180),
+      ),
+      Pixel(
+        x: 107,
+        y: 41,
+        color: Colors.yellow.withAlpha(230),
+      ),
+      Pixel(
+        x: 108,
+        y: 41,
+        color: Colors.yellow.withAlpha(230),
+      ),
+      Pixel(
+        x: 106,
+        y: 41,
+        color: Colors.yellow.withAlpha(255),
+      ),
+      Pixel(
+        x: 107,
+        y: 42,
+        color: Colors.yellow.withAlpha(100),
+      ),
+    ];
+    // for (int i = 0; i < 170; i++) {
+    //   for (int j = 0; j < 90; j++) {
+    //     _grid.add(Pixel(x: i, y: j));
+    //   }
+    // }
+    setState(() {});
   }
 }
 
@@ -66,9 +112,12 @@ class Pixel extends StatelessWidget {
   final int x;
   final int y;
 
+  final Color color;
+
   Pixel({
     this.x = 0,
     this.y = 0,
+    this.color = Colors.yellow,
   });
 
   @override
@@ -79,7 +128,7 @@ class Pixel extends StatelessWidget {
       child: Container(
         width: pixelWidth,
         height: pixelHeight,
-        color: Colors.yellow,
+        color: color,
       ),
     );
   }
