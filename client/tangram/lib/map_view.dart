@@ -12,8 +12,25 @@ class _MapViewState extends State<MapView> {
   List<Widget> _grid = [];
   bool _refresh = false;
 
+  double tapX;
+  double tapY;
+
+  void recordTap(BuildContext context, TapDownDetails details) {
+    final RenderBox box = context.findRenderObject();
+    final Offset localOffset = box.globalToLocal(details.globalPosition);
+    // final Offset localOffset = details.globalPosition;
+    tapX = localOffset.dx;
+    tapY = localOffset.dy;
+  }
+
   void launchTileView(BuildContext context) {
-    Navigator.of(context).push(ScaleRoute(page: TileView()));
+    print('$tapX $tapY');
+    int coordX = ((tapX - Pixel.left) / (Pixel.pixelWidth + .5)).floor();
+    int coordY = ((tapY - Pixel.top) / (Pixel.pixelHeight + .5)).floor();
+
+    print('$coordX $coordY');
+
+    // Navigator.of(context).push(ScaleRoute(page: TileView()));
   }
 
   @override
@@ -42,21 +59,25 @@ class _MapViewState extends State<MapView> {
             : Icon(Icons.refresh),
       ),
       body: Container(
-        color: Colors.grey,
+        color: Colors.cyan[100],
         child: InteractiveViewer(
             minScale: 0.1,
             maxScale: 100.0,
-            child: GestureDetector(
-              onTap: () => launchTileView(context),
-              child: Stack(children: [
-                SvgPicture.asset(
-                  'assets/grey_map.svg',
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                ),
-                ..._grid,
-              ]),
+            child: Builder(
+              builder: (context) => GestureDetector(
+                onTapDown: (TapDownDetails details) =>
+                    recordTap(context, details),
+                onTap: () => launchTileView(context),
+                child: Stack(children: [
+                  SvgPicture.asset(
+                    'assets/grey_map.svg',
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                  ),
+                  ..._grid,
+                ]),
+              ),
             )),
       ),
     );
@@ -70,26 +91,27 @@ class _MapViewState extends State<MapView> {
         y: 40,
         color: Colors.yellow.withAlpha(180),
       ),
-      Pixel(
-        x: 107,
-        y: 41,
-        color: Colors.yellow.withAlpha(230),
-      ),
-      Pixel(
-        x: 108,
-        y: 41,
-        color: Colors.yellow.withAlpha(230),
-      ),
-      Pixel(
-        x: 106,
-        y: 41,
-        color: Colors.yellow.withAlpha(255),
-      ),
-      Pixel(
-        x: 107,
-        y: 42,
-        color: Colors.yellow.withAlpha(100),
-      ),
+      Pixel(x: 8, y: 20)
+      // Pixel(
+      //   x: 107,
+      //   y: 41,
+      //   color: Colors.yellow.withAlpha(230),
+      // ),
+      // Pixel(
+      //   x: 108,
+      //   y: 41,
+      //   color: Colors.yellow.withAlpha(230),
+      // ),
+      // Pixel(
+      //   x: 106,
+      //   y: 41,
+      //   color: Colors.yellow.withAlpha(255),
+      // ),
+      // Pixel(
+      //   x: 107,
+      //   y: 42,
+      //   color: Colors.yellow.withAlpha(100),
+      // ),
     ];
     // for (int i = 0; i < 170; i++) {
     //   for (int j = 0; j < 90; j++) {
@@ -101,13 +123,13 @@ class _MapViewState extends State<MapView> {
 }
 
 class Pixel extends StatelessWidget {
-  final double left = 8;
-  final double top = 230;
-  final double screenWidth = 408.7;
-  final double screenHeight = 300;
+  static final double left = 8;
+  static final double top = 230;
+  static final double screenWidth = 408.7;
+  static final double screenHeight = 300;
 
-  final double pixelWidth = 2;
-  final double pixelHeight = 3;
+  static final double pixelWidth = 2;
+  static final double pixelHeight = 3;
 
   final int x;
   final int y;
