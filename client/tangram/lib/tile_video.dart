@@ -56,39 +56,42 @@ class _TileVideoState extends State<TileVideo> {
   @override
   void initState() {
     super.initState();
-    // TODO: uncomment
-    // getData();
+    getData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   Future<void> getData() async {
-    var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
-    print(url);
+    // var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
+    // print(url);
 
-    // Await the http get response, then decode the json-formatted response.
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      var jsonResponse = convert.jsonDecode(response.body);
-      // if (jsonResponse['data'] == []) {
-      // print(jsonResponse['data']);
-      // print(jsonResponse['data'][0][0]['title']);
-      try {
-        data = PostData.fromJson(jsonResponse);
+    // // Await the http get response, then decode the json-formatted response.
+    // var response = await http.get(url);
+    // if (response.statusCode == 200) {
+    //   var jsonResponse = convert.jsonDecode(response.body);
+    try {
+      // data = PostData.fromJson(jsonResponse);
+      data = PostData();
 
-        _controller = YoutubePlayerController(
-          initialVideoId: YoutubePlayer.convertUrlToId(data.video),
-          flags: YoutubePlayerFlags(
-              autoPlay: true, mute: false, disableDragSeek: true),
-        );
-        // }
-      } on RangeError {
-        isForm = true;
-      }
-      setState(() {});
-      // var itemCount = jsonResponse['totalItems'];
-      // print('Number of books about http: $itemCount.');
-    } else {
-      print('Request failed with status: ${response.statusCode}.');
+      _controller = YoutubePlayerController(
+        initialVideoId: YoutubePlayer.convertUrlToId(data.video),
+        flags: YoutubePlayerFlags(
+            autoPlay: true, mute: false, disableDragSeek: true),
+      );
+      // }
+    } on RangeError {
+      isForm = true;
     }
+    setState(() {});
+    // var itemCount = jsonResponse['totalItems'];
+    // print('Number of books about http: $itemCount.');
+    // } else {
+    //   print('Request failed with status: ${response.statusCode}.');
+    // }
   }
 
   @override

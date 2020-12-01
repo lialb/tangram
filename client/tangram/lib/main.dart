@@ -25,13 +25,17 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        /* dark theme settings */
-      ),
-      themeMode: ThemeMode.dark,
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark,
+      //   /* dark theme settings */
+      // ),
+      // themeMode: ThemeMode.dark,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        primarySwatch: Colors.yellow,
+        accentColor: Colors.yellow[500],
+        toggleableActiveColor: Colors.yellow[500],
+        textSelectionColor: Colors.yellow[200],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Scaffold(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tangram/scale_transition.dart';
+import 'package:tangram/tileview.dart';
 
 class MapView extends StatefulWidget {
   @override
@@ -7,6 +9,12 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
+  List<Widget> _grid = [];
+
+  void launchTileView(BuildContext context) {
+    Navigator.of(context).push(ScaleRoute(page: TileView()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,27 +27,30 @@ class _MapViewState extends State<MapView> {
         child: InteractiveViewer(
             minScale: 0.1,
             maxScale: 100.0,
-            child: Stack(children: [
-              SvgPicture.asset(
-                'assets/grey_map.svg',
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-              ),
-              ...buildGrid(),
-            ])),
+            child: GestureDetector(
+              onTap: () => launchTileView(context),
+              child: Stack(children: [
+                SvgPicture.asset(
+                  'assets/grey_map.svg',
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                ),
+                Pixel(x: 108, y: 40),
+                ..._grid,
+              ]),
+            )),
       ),
     );
   }
 
-  List<Widget> buildGrid() {
-    List<Widget> toReturn = [];
+  void buildGrid() {
+    _grid = [];
     for (int i = 0; i < 170; i++) {
       for (int j = 0; j < 90; j++) {
-        // toReturn.add(Pixel(x: i, y: j));
+        _grid.add(Pixel(x: i, y: j));
       }
     }
-    return toReturn;
   }
 }
 

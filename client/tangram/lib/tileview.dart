@@ -12,11 +12,12 @@ class TileView extends StatefulWidget {
 enum Direction { CENTER, LEFT, RIGHT, UP, DOWN }
 
 class _TileViewState extends State<TileView> with TickerProviderStateMixin {
-  Widget _current = Container(
-    width: double.infinity,
-    height: double.infinity,
-    color: Colors.red[100],
-  );
+  Widget _current = TileVideo();
+  // = Container(
+  //   width: double.infinity,
+  //   height: double.infinity,
+  //   color: Colors.red[100],
+  // );
 
   int x = 0;
   int y = 0;
@@ -75,11 +76,12 @@ class _TileViewState extends State<TileView> with TickerProviderStateMixin {
     double dx = changes[0].toDouble();
     double dy = changes[1].toDouble();
 
-    Widget next = Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: grid[x + changes[0]][y + changes[1]],
-    );
+    Widget next = TileVideo();
+    //     = Container(
+    //   width: double.infinity,
+    //   height: double.infinity,
+    //   color: grid[x + changes[0]][y + changes[1]],
+    // );
 
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
