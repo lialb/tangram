@@ -219,7 +219,7 @@ def deletePost(PostID):
     '''
     result = neo4j_api.delete_post(PostID)
     print(result)
-    return json.dumps([{'Status' : result}])
+    return json.dumps([{'Status' : result }])
     
 
 @app.route('/update-post-likes/<string:PostID>', methods=['PUT'])
@@ -229,7 +229,7 @@ def updatePostLikes(PostID):
     '''
     likes = request.form['totalLikes']
     result = neo4j_api.delete_post(PostID, likes)
-    return json.dumps([{'Status' : result}])
+    return json.dumps([{'Status' : result }])
 
 @app.route('/update-post-title/<string:PostID>', methods=['PUT'])
 def updatePostTitle(PostID):
@@ -239,7 +239,7 @@ def updatePostTitle(PostID):
     title = request.form['title']
     result = neo4j_api.updatePostTitle(PostID, title)
     print(result)
-    return json.dumps([{'Status' : result}])
+    return json.dumps([{'Status' : result }])
 
 @app.route('/update-post-coordinates/<string:PostID>', methods=['PUT'])
 def updatePostCoordinates(PostID):
@@ -249,9 +249,57 @@ def updatePostCoordinates(PostID):
     x = request.form['XCoordinate']
     y = request.form['YCoordinate']
     result = neo4j_api.update_post_coordinates(PostID, x, y)
-    print(result)
-    return json.dumps([{'Status' : result}])
+    return json.dumps([{ 'Status' : result }])
+
+# ADVANCED FUNCTION 1 BACKEND
+def getHeatMapHelper(username=None):
+    '''
+    Helper function to get normalized heat map of posts based on likes. If username field is not None, find
+    a particular user's posts and make it negative
+    '''
+    LENGTH = 170
+    HEIGHT = 90
+    grid = [[0 for _ in range(HEIGHT)] for _ in range(LENGTH)]
+
+    videos = json.loads(neo4j_api.get_all_videos())['data']
     
+    total = 0
+    for vid in videos:
+        data = vid[0]['data']
+        if 'likes' not in data:
+            continue
+        x = data['coordX']
+        y = data['coordY']
+        likes = data['likes']
+        total += likes ** 2
+        grid[y][x] = likes
+        if username:
+            if 'userName' in data and data['userName'] == username:
+                grid[y][x] *= -1
+            elif 'Username' in data and data['Username'] == username:
+                grid[y][x] *= -1
+
+    magnitude = total ** .5
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            grid[i][j] /= magnitude
+
+    return json.dumps(grid)
+
+@app.route('/get-heat-map')
+def getHeatMap():
+    '''
+    Returns a 2d array (170 x 90) of normalized values between [0, 1] based on post likes
+    '''
+    return getHeatMapHelper()
+
+@app.route('/get-user-heat-map/<string:Username>')
+def getUserHeatMap(Username):
+    '''
+    Returns a 2d array (170 x 90) of normalized values between [0, 1] based on post likes
+    Specific user values are negative
+    '''
+    return getHeatMapHelper(username=Username)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
