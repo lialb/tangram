@@ -68,7 +68,7 @@ class _UsersExploreState extends State<UsersExplore> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Users'),
+          title: Text('Add a friend'),
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.push(
@@ -97,7 +97,7 @@ class _UsersExploreState extends State<UsersExplore> {
               child: ListView.builder(
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
-                    return UserItem(data: filtered[index]);
+                    return UserItem(username: filtered[index].username);
                   }),
             ),
           )
@@ -110,19 +110,32 @@ class UserData {
   final String name;
   final int likes;
   final String description;
+  final List<String> friends;
 
-  UserData({this.username, this.name, this.likes, this.description});
+  static const List<String> friendsDefault = [
+    'Albear',
+    'Aritrooo',
+    'MDPham',
+  ];
+
+  UserData(
+      {this.username = 'theodorespeaks',
+      this.name = 'Teddy',
+      this.likes = 200,
+      this.description = "I like CS and bees!",
+      this.friends = friendsDefault});
 
   UserData.fromJson(Map<String, dynamic> json)
       : username = json['Username'],
         name = json['Name'],
         likes = json['TotalLikes'],
-        description = json['Description'];
+        description = json['Description'],
+        friends = json['friends'];
 }
 
 class UserItem extends StatelessWidget {
-  final UserData data;
-  const UserItem({Key key, this.data}) : super(key: key);
+  final String username;
+  const UserItem({Key key, this.username}) : super(key: key);
 
   Future<void> deleteUser(String username) async {
     var url = Uri.parse('$ip/delete-user?Username=$username');
@@ -137,11 +150,11 @@ class UserItem extends StatelessWidget {
       actionExtentRatio: .25,
       secondaryActions: [
         IconSlideAction(
-          caption: 'Delete',
+          caption: 'Remove',
           color: Colors.red,
-          icon: Icons.delete,
+          icon: Icons.delete_outline,
           onTap: () {
-            deleteUser(data.username);
+            deleteUser(username);
           },
         )
       ],
@@ -150,7 +163,10 @@ class UserItem extends StatelessWidget {
           Navigator.push(
               context,
               PageTransition(
-                  type: PageTransitionType.fade, child: UserInfo(data: data)));
+                  type: PageTransitionType.fade,
+                  child: UserInfo(
+                    username: username,
+                  )));
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -165,8 +181,8 @@ class UserItem extends StatelessWidget {
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.name),
-                  Text('@${data.username}'),
+                  // Text(data.name),
+                  Text(username),
                 ],
               )),
               Icon(Icons.chevron_right)
