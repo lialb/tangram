@@ -33,6 +33,7 @@ dependencies:
   page_transition: ^1.1.7+2
   http: ^0.12.2
   flutter_slidable: ^0.5.7
+  flutter_svg: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

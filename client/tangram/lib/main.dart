@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tangram/map_view.dart';
 import 'package:tangram/tileview.dart';
 import 'package:tangram/users_explore.dart';
 
@@ -15,7 +16,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   List<Widget> children = [
-    TileView(),
+    MapView(),
+    // TileView(),
     UsersExplore(),
   ];
 
