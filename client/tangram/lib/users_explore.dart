@@ -164,7 +164,9 @@ class UserItem extends StatelessWidget {
               context,
               PageTransition(
                   type: PageTransitionType.fade,
-                  child: UserInfo(data: UserData())));
+                  child: UserInfo(
+                    username: username,
+                  )));
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -7,10 +7,11 @@ import 'dart:convert' as convert;
 import 'constants.dart';
 
 class UserInfo extends StatefulWidget {
-  final UserData data;
+  // final UserData data;
   final bool isUser;
+  final String username;
 
-  UserInfo({@required this.data, this.isUser = false});
+  UserInfo({@required this.username, this.isUser = false});
 
   @override
   _UserInfoState createState() => _UserInfoState();
@@ -19,12 +20,13 @@ class UserInfo extends StatefulWidget {
 class _UserInfoState extends State<UserInfo> {
   bool edit = false;
   final descriptionController = TextEditingController();
+  UserData data;
 
   Future<void> updateDescription(String description) async {
     // This example uses the Google Books API to search for books about http.
     // https://developers.google.com/books/docs/overview
     var url =
-        '$ip/update-description?Username=${widget.data.username}&Description=$description';
+        '$ip/update-description?Username=${widget.username}&Description=$description';
 
     // Await the http get response, then decode the json-formatted response.
     var response = await http.put(url,
@@ -32,7 +34,7 @@ class _UserInfoState extends State<UserInfo> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: convert.jsonEncode(
-            {'Username': widget.data.username, 'Description': description}));
+            {'Username': widget.username, 'Description': description}));
     if (response.statusCode == 200) {
       // var jsonResponse = convert.jsonDecode(response.body);
     } else {
@@ -43,7 +45,12 @@ class _UserInfoState extends State<UserInfo> {
   @override
   void initState() {
     super.initState();
-    descriptionController.text = widget.data.description;
+    getData();
+  }
+
+  void getData() {
+    data = UserData();
+    descriptionController.text = data.description;
   }
 
   @override
@@ -63,12 +70,12 @@ class _UserInfoState extends State<UserInfo> {
         //   ],
         // ),
         body: ListView.builder(
-      itemCount: widget.data.friends.length + 1,
+      itemCount: data.friends.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
           return buildListWidget(context);
         }
-        return UserItem(username: widget.data.friends[index - 1]);
+        return UserItem(username: data.friends[index - 1]);
       },
     ));
   }
@@ -77,8 +84,8 @@ class _UserInfoState extends State<UserInfo> {
     return Column(
       children: [
         ProfileHeader(
-          name: widget.data.name,
-          username: widget.data.username,
+          name: data.name,
+          username: data.username,
           edit: widget.isUser
               ? IconButton(
                   icon: Icon(edit ? Icons.check : Icons.edit),
