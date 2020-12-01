@@ -150,6 +150,52 @@ def createUser():
     except mysql.connector.Error as e:
         cur.close()
         print('Ran into exception: {}'.format(e))
+
+@app.route('/add-friend', methods=['POST'])
+def addFriend():
+    '''
+    Adds friends in the friends table in MySQL.
+    '''
+    print(request.get_json())
+    user1 = request.get_json()['user1']
+    user2 = request.get_json()['user2']
+    user1 = str(user1)
+    user2 = str(user2)
+
+    if(user1 > user2):
+        temp = user1
+        user1 = user2
+        user2 = temp
+
+    cur = connection.cursor()
+    try:
+        cur.execute("INSERT INTO tangram_friends(user1, user2) VALUES ('{}', '{}')".format(user1, user2))
+        connection.commit()
+        connection.commit()
+        cur.close()
+        return json.dumps([{ 'Status' : 1 }])
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
+
+@app.route('/delete-friend', methods=['DELETE'])
+def deleteFriend():
+    '''
+    Delete friend from `friends` table given the username
+    '''
+    user1 = request.get_json()['user1']
+    user2 = request.get_json()['user2']
+    user1 = str(user1)
+    user2 = str(user2)
+    cur = connection.cursor()
+    try:
+        cur.execute("DELETE FROM tangram_friends where user1 = '{}' AND user2 = '{}'".format(user1, user2))
+        connection.commit()
+        cur.close()
+        return 'Successfully deleted friends: {}, {}'.format(user1, user2)
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
     
 @app.route('/delete-user', methods=['DELETE'])
 def deleteUser():
