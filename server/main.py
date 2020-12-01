@@ -85,6 +85,22 @@ def getUser(username):
         cur.close()
         print('Ran into exception: {}'.format(e))
 
+@app.route('/get-friends/<string:username>')
+def getFriends(username):
+    '''
+    Get friends of specific user based on username from MySQL
+    '''
+    cur = connection.cursor()
+    try:
+        cur.execute("(select distinct U2.user1 AS Friend FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}') UNION (select distinct U1.user2 AS Friend FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}')".format(username, username))
+        headers = [x[0] for x in cur.description]
+        result = [dict(zip(headers, row)) for row in cur.fetchall()]
+        cur.close()
+        return json.dumps(result)
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
+
 @app.route('/get-all-users')
 def getAllUsers():
     '''

@@ -59,35 +59,39 @@ class _TileVideoState extends State<TileVideo> {
     getData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   Future<void> getData() async {
-    var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
-    print(url);
+    // var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
+    // print(url);
 
-    // Await the http get response, then decode the json-formatted response.
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      var jsonResponse = convert.jsonDecode(response.body);
-      // if (jsonResponse['data'] == []) {
-      // print(jsonResponse['data']);
-      // print(jsonResponse['data'][0][0]['title']);
-      try {
-        data = PostData.fromJson(jsonResponse);
+    // // Await the http get response, then decode the json-formatted response.
+    // var response = await http.get(url);
+    // if (response.statusCode == 200) {
+    //   var jsonResponse = convert.jsonDecode(response.body);
+    try {
+      // data = PostData.fromJson(jsonResponse);
+      data = PostData();
 
-        _controller = YoutubePlayerController(
-          initialVideoId: YoutubePlayer.convertUrlToId(data.video),
-          flags: YoutubePlayerFlags(
-              autoPlay: true, mute: false, disableDragSeek: true),
-        );
-        // }
-      } on RangeError {
-        isForm = true;
-      }
-      setState(() {});
-      // var itemCount = jsonResponse['totalItems'];
-      // print('Number of books about http: $itemCount.');
-    } else {
-      print('Request failed with status: ${response.statusCode}.');
+      _controller = YoutubePlayerController(
+        initialVideoId: YoutubePlayer.convertUrlToId(data.video),
+        flags: YoutubePlayerFlags(
+            autoPlay: true, mute: false, disableDragSeek: true),
+      );
+      // }
+    } on RangeError {
+      isForm = true;
     }
+    setState(() {});
+    // var itemCount = jsonResponse['totalItems'];
+    // print('Number of books about http: $itemCount.');
+    // } else {
+    //   print('Request failed with status: ${response.statusCode}.');
+    // }
   }
 
   @override
@@ -95,7 +99,7 @@ class _TileVideoState extends State<TileVideo> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () => _controller.play(),
         child: isForm
             ? buildForm()
@@ -203,6 +207,8 @@ class _TileVideoState extends State<TileVideo> {
   SafeArea buildForm() {
     return SafeArea(
       child: Container(
+        width: double.infinity,
+        height: double.infinity,
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
