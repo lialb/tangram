@@ -41,7 +41,7 @@ def userWithMostLikes():
     cur = connection.cursor()
     try:
         cur.execute(
-            'SELECT u.Username, u.totLikes FROM (SELECT x.Username, count(x.likes) AS totLikes FROM tangram_users JOIN tangram_posts AS x ON tangram_users.Username = x.Username GROUP BY x.Username) AS u HAVING u.totLikes = max(u.totLikes) ORDER BY u.totLikes DESC'
+            'select u.Username, max(u.totLikes) from (select x.Username, count(x.likes) as totLikes from tangram_users join tangram_posts as x on tangram_users.Username = x.Username group by x.Username) as u group by u.Username order by u.totLikes desc'
         )
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
