@@ -52,19 +52,27 @@ def delete_all_posts():
 
 def addData():
     postIds = []
+    usernames = ['Albear', 'Albert', 'Alfred', 'Aritrooo', 'Beverly', 'Catherine', 'Charles', 'Cheryl', 'Christopher', 'Danielle', 'Delores', 'Georgiana', 'Jacquelin', 'Jessica', 'John', 'Karen', 'Mdpham', 'Patrick', 'Rose', 'Sally', 'Sondra', 'Teresa', 'TheodoreSpeaks', 'Thomas', 'Valerie']
+    i = 0
     with open("../videos.csv", mode = "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         next(csv_reader)
         for row in csv_reader:
             print(row)
             postIds.append(row["postId"])
-            create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], random.randint(1, 1000), 1606886176, row["userName"])
+            create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], random.randint(1, 1000), 1606886176, usernames[i % len(usernames)])
+            i += 1
+            # break
 
-    for i in range(len(postIds)):
-        for j in range(len(postIds)):
-            if i == j:
-                continue
-            create_relationship(postIds[i], postIds[j])
+    # for i in range(len(postIds)):
+    #     for j in range(len(postIds)):
+    #         if i == j:
+    #             continue
+    #         create_relationship(postIds[i], postIds[j])
+
+# delete_all_posts()
+# addData()
+
 
 # print(create_relationship(1, 2))
 # for i in range(1, 110):

@@ -33,6 +33,27 @@ except mysql.connector.Error as e:
 def home():
     return 'Connected to server'
 
+@app.route('/get-usernames')
+def getUsernames():
+    '''
+    Find all usernames from tangram_users table
+    '''
+    cur = connection.cursor()
+    try:
+        cur.execute(
+           'SELECT DISTINCT Username FROM tangram_users;' 
+        )
+        data = [row[0] for row in cur.fetchall()]
+        print(data)
+        # headers = [x[0] for x in cur.description]
+        # result = [dict(zip(headers, row)) for row in cur.fetchall()]
+        cur.close()
+        return json.dumps(data)
+    except mysql.connector.Error as e:
+        cur.close()
+        print('Ran into exception: {}'.format(e))
+
+
 @app.route('/max-likes')
 def userWithMostLikes():
     '''
@@ -351,7 +372,8 @@ def getHeatMapHelper(username=None):
                 grid[y][x] *= -1
             elif 'Username' in data and data['Username'] == username:
                 grid[y][x] *= -1
-
+    if total == 0:
+        return 
     magnitude = total ** .5
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -373,6 +395,7 @@ def getUserHeatMap(Username):
     Specific user values are negative
     '''
     return getHeatMapHelper(username=Username)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
