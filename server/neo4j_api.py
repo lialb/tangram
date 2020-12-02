@@ -1,5 +1,7 @@
 import requests
 import config
+import csv
+import pandas as pd
 
 neo4jSecrets = config.neo4jKey
 
@@ -42,3 +44,14 @@ def get_video_by_coordinates(x, y):
 def create_relationship(a, b):
     query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)-[:adjacent]->(b) return a,b"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+
+def addData():
+    with open("../videos.csv", mode = "r") as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        b = False
+        for row in csv_reader:
+            if (b == False):
+                b = True
+                continue
+            create_post(create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], 1606886176, row["userName"]))
+    

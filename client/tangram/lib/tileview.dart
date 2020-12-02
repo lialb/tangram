@@ -84,13 +84,13 @@ class _TileViewState extends State<TileView> with TickerProviderStateMixin {
 
     Widget placeholder // = TileVideo();
         = Container(
+      color: Colors.black,
       width: double.infinity,
       height: double.infinity,
       child: Center(
-          child: Icon(
-        Icons.play_arrow,
-        size: 256,
-        color: Colors.grey[700],
+          child: Image.asset(
+        'assets/logo_grey.png',
+        width: 256,
       )),
     );
 
