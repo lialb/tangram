@@ -40,5 +40,5 @@ def get_video_by_coordinates(x, y):
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def create_relationship(a, b):
-    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' create (a)-[:adjacent]->(b) return a,b"}
+    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordY - b.coordY == 1 OR b.coordY - a.coordY == 1) AND (a.coordX - b.coordX == 1 OR b.coordX - a.coordX == 1) create (a)-[:adjacent]->(b) return a,b"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
