@@ -51,7 +51,8 @@ class _TileVideoState extends State<TileVideo> {
 
   final titleController = TextEditingController();
   final urlController = TextEditingController();
-  bool isForm = false;
+  // TODO: revert to false
+  bool isForm = true;
 
   @override
   void initState() {
@@ -104,9 +105,7 @@ class _TileVideoState extends State<TileVideo> {
         child: isForm
             ? buildForm()
             : data == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? Container()
                 : Stack(
                     children: [
                       Positioned(
