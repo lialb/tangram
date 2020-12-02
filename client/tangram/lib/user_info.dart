@@ -60,6 +60,7 @@ class _UserInfoState extends State<UserInfo> {
 
     setState(() {
       data = UserData.fromJson(jsonDecode(response.body));
+      data.friends.sort();
     });
     descriptionController.text = data.description;
   }

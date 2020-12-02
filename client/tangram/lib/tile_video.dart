@@ -272,6 +272,7 @@ class _TileVideoState extends State<TileVideo> {
   Widget buildForm() {
     return Container(
       height: 200,
+      width: 1000,
       child: Form(
         key: _formKey,
         child: Column(
