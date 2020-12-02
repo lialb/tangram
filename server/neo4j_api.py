@@ -27,7 +27,7 @@ def update_post_coordinates(postID, x, y):
 
 def create_post(postID, text, link, x, y, likes, time, username):
     query = {"query":"create(v : Video {postID : '" + str(postID) + "', text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", likes: " + str(likes) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
-    create_relationship()
+    create_relationship(postID)
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def get_all_videos():
@@ -42,8 +42,12 @@ def get_video_by_coordinates(x, y):
     query = {"query" : "match(v : Video{coordX : " + str(x) + ", coordY : " + str(y) + "}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-def create_relationship():
+def create_relationship(postID):
     # query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)-[:adjacent]->(b) return a,b"}
+    query = {"query": "match(a:Video),(b:Video) where (a.postID = '{0}' OR b.postID = '{0}') AND ((a.coordX=b.coordX AND abs(a.coordY - b.coordY) = 1) OR (a.coordY = b.coordY AND abs(a.coordX - b.coordX) = 1)) create (a)-[:adjacent]->(b) return a,b".format(postID)}
+    return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+
+def create_all_relationships():
     query = {"query": "match(a:Video),(b:Video) where ((a.coordX=b.coordX AND abs(a.coordY - b.coordY) = 1) OR (a.coordY = b.coordY AND abs(a.coordX - b.coordX) = 1)) create (a)-[:adjacent]->(b) return a,b"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
