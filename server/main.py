@@ -193,7 +193,7 @@ def addFriend():
         cur.close()
         print('Ran into exception: {}'.format(e))
 
-@app.route('/delete-friend', methods=['DELETE'])
+@app.route('/delete-friend', methods=['POST'])
 def deleteFriend():
     '''
     Delete friend from `friends` table given the username
