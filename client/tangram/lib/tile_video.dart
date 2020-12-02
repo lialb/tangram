@@ -209,20 +209,24 @@ class _TileVideoState extends State<TileVideo> {
                             right: 16,
                             top: 16,
                             child: PopupMenuButton(
-                              onSelected: (_) => deletePost(data.postID),
                               itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Icon(Icons.delete),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Text('Remove'),
-                                    ],
+                                InkWell(
+                                  onTap: () {
+                                    deletePost(data.postID);
+                                  },
+                                  child: PopupMenuItem(
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        Icon(Icons.delete),
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        Text('Remove'),
+                                      ],
+                                    ),
                                   ),
                                 )
                               ],
@@ -245,10 +249,12 @@ class _TileVideoState extends State<TileVideo> {
   }
 
   Future<void> deletePost(String username) async {
-    print('delet');
     var url = Uri.parse('$ip/delete-post/$username');
     var request = http.Request("DELETE", url);
     request.send();
+    setState(() {
+      isForm = true;
+    });
   }
 
   Widget buildForm() {
