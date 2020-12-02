@@ -209,24 +209,21 @@ class _TileVideoState extends State<TileVideo> {
                             right: 16,
                             top: 16,
                             child: PopupMenuButton(
+                              onSelected: _select,
                               itemBuilder: (context) => [
-                                InkWell(
-                                  onTap: () {
-                                    deletePost(data.postID);
-                                  },
-                                  child: PopupMenuItem(
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 8.0,
-                                        ),
-                                        Icon(Icons.delete),
-                                        SizedBox(
-                                          width: 8.0,
-                                        ),
-                                        Text('Remove'),
-                                      ],
-                                    ),
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      Icon(Icons.delete),
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      Text('Remove'),
+                                    ],
                                   ),
                                 )
                               ],
@@ -246,6 +243,10 @@ class _TileVideoState extends State<TileVideo> {
         ),
       ),
     );
+  }
+
+  void _select(dynamic choice) {
+    deletePost(data.postID);
   }
 
   Future<void> deletePost(String username) async {
