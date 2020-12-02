@@ -229,6 +229,10 @@ def deleteUser():
         cur.execute("DELETE FROM tangram_users where username = '{}'".format(username))
         connection.commit()
         cur.close()
+        cur = connection.cursor()
+        cur.execute("DELETE FROM tangram_friends where user1 = '{}' OR user2 = '{}'".format(username, username))
+        connection.commit()
+        cur.close()
         return 'Successfully deleted user: {}'.format(username)
     except mysql.connector.Error as e:
         cur.close()
