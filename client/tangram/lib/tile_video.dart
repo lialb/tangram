@@ -80,7 +80,11 @@ class _TileVideoState extends State<TileVideo> {
       _controller = YoutubePlayerController(
         initialVideoId: YoutubePlayer.convertUrlToId(data.video),
         flags: YoutubePlayerFlags(
-            autoPlay: true, mute: false, disableDragSeek: true),
+            enableCaption: false,
+            controlsVisibleAtStart: false,
+            autoPlay: true,
+            mute: false,
+            disableDragSeek: true),
       );
       // }
     } on RangeError {
@@ -104,9 +108,7 @@ class _TileVideoState extends State<TileVideo> {
         child: isForm
             ? buildForm()
             : data == null
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? Container()
                 : Stack(
                     children: [
                       Positioned(
@@ -131,17 +133,17 @@ class _TileVideoState extends State<TileVideo> {
                           ),
                         ),
                       ),
-                      Positioned(
-                          right: 16,
-                          top: 64,
-                          child: IconButton(
-                            icon: Icon(Icons.people, color: Colors.white),
-                            onPressed: () => Navigator.push(
-                                context,
-                                PageTransition(
-                                    type: PageTransitionType.fade,
-                                    child: UsersExplore())),
-                          )),
+                      // Positioned(
+                      //     right: 16,
+                      //     top: 64,
+                      //     child: IconButton(
+                      //       icon: Icon(Icons.people, color: Colors.white),
+                      //       onPressed: () => Navigator.push(
+                      //           context,
+                      //           PageTransition(
+                      //               type: PageTransitionType.fade,
+                      //               child: UsersExplore())),
+                      //     )),
                       Positioned(
                         bottom: 16,
                         left: 16,
@@ -180,18 +182,18 @@ class _TileVideoState extends State<TileVideo> {
                           ),
                         ),
                       ),
-                      Positioned(
-                          left: 16,
-                          top: 64,
-                          child: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.white),
-                              onPressed: () {
-                                print(data.postID);
-                                deletePost(data.postID);
-                                setState(() {
-                                  isForm = true;
-                                });
-                              })),
+                      // Positioned(
+                      //     left: 16,
+                      //     top: 64,
+                      //     child: IconButton(
+                      //         icon: Icon(Icons.delete, color: Colors.white),
+                      //         onPressed: () {
+                      //           print(data.postID);
+                      //           deletePost(data.postID);
+                      //           setState(() {
+                      //             isForm = true;
+                      //           });
+                      //         })),
                     ],
                   ),
       ),

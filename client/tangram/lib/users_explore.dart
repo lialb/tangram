@@ -52,9 +52,9 @@ class _UsersExploreState extends State<UsersExplore> {
         print('Request failed with status: ${response.statusCode}.');
       }
     } catch (SocketException) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Unable to connect to server'),
-      ));
+      // Scaffold.of(context).showSnackBar(SnackBar(
+      //   content: Text('Unable to connect to server'),
+      // ));
     }
   }
 
@@ -112,17 +112,13 @@ class UserData {
   final String description;
   final List<String> friends;
 
-  static const List<String> friendsDefault = [
-    'Albear',
-    'Aritrooo',
-    'MDPham',
-  ];
+  static const List<String> friendsDefault = [];
 
   UserData(
-      {this.username = 'theodorespeaks',
-      this.name = 'Teddy',
-      this.likes = 200,
-      this.description = "I like CS and bees!",
+      {this.username = 'loading...',
+      this.name = 'Loading...',
+      this.likes = 0,
+      this.description = "Loading...",
       this.friends = friendsDefault});
 
   UserData.fromJson(Map<String, dynamic> json)
@@ -130,7 +126,8 @@ class UserData {
         name = json['Name'],
         likes = json['TotalLikes'],
         description = json['Description'],
-        friends = json['friends'];
+        friends =
+            (json['Friends'] as List)?.map((item) => item as String)?.toList();
 }
 
 class UserItem extends StatelessWidget {
@@ -158,7 +155,7 @@ class UserItem extends StatelessWidget {
           },
         )
       ],
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           Navigator.push(
               context,

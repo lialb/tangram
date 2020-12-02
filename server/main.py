@@ -76,11 +76,26 @@ def getUser(username):
     '''
     cur = connection.cursor()
     try:
-        cur.execute("SELECT * FROM tangram_users, ((select distinct U2.user1 AS Friends FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}') UNION (select distinct U1.user2 AS Friends FROM tangram_friends AS U1 INNER JOIN tangram_friends AS U2 ON U1.user1 = U2.user2 WHERE U1.user1 = '{}')) AS C WHERE tangram_users.Username = '{}'".format(username, username, username))
+        cur.execute("SELECT * FROM tangram_users NATURAL JOIN ((select distinct tangram_friends.user2 AS Username, tangram_friends.user1 AS Friends FROM tangram_friends WHERE tangram_friends.user2 = '{}') UNION (select distinct tangram_friends.user1 AS Username, tangram_friends.user2 AS Friends FROM tangram_friends WHERE tangram_friends.user1 = '{}')) AS C".format(username, username, username))
         headers = [x[0] for x in cur.description]
         result = [dict(zip(headers, row)) for row in cur.fetchall()]
         cur.close()
         arr = []
+        if len(result) == 0:
+            cur = connection.cursor()
+            cur.execute("SELECT * FROM tangram_users WHERE tangram_users.Username = '{}'".format(username))
+            headers = [x[0] for x in cur.description]
+            basicRes = [dict(zip(headers, row)) for row in cur.fetchall()]
+            cur.close()
+            newResult = {
+                "Username" : basicRes[0]['Username'],
+                "Name" : basicRes[0]['Name'],
+                "TotalLikes" : basicRes[0]['TotalLikes'],
+                "ProfilePicture" : basicRes[0]['ProfilePicture'],
+                "Description" : basicRes[0]['Description'],
+                "Friends" : []
+            }
+            return json.dumps(newResult)
         for i in range(len(result)):
             arr.append(result[i]['Friends'])
         reformatted = {

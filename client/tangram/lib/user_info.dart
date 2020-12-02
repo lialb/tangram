@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tangram/users_explore.dart';
 
@@ -48,8 +50,16 @@ class _UserInfoState extends State<UserInfo> {
     getData();
   }
 
-  void getData() {
+  void getData() async {
     data = UserData();
+    print('here');
+    var url = '$ip/get-user/${widget.username}';
+    print(url);
+    var response = await http.get(url);
+
+    setState(() {
+      data = UserData.fromJson(jsonDecode(response.body));
+    });
     descriptionController.text = data.description;
   }
 
@@ -98,7 +108,7 @@ class _UserInfoState extends State<UserInfo> {
                     });
                   },
                 )
-              : Container(),
+              : Container(height: 48),
         ),
         SizedBox(
           height: 40,
