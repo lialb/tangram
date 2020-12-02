@@ -1,7 +1,7 @@
 import requests
+import random
 import config
 import csv
-import pandas as pd
 
 neo4jSecrets = config.neo4jKey
 
@@ -25,8 +25,8 @@ def update_post_coordinates(postID, x, y):
     query = {"query":"match(v : Video {postID = '" + str(postID) +  "'}) set v.coordX = " + str(x) + " set v.coordY = " + str(y)}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-def create_post(postID, text, link, x, y, time, username):
-    query = {"query":"create(v : Video {text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
+def create_post(postID, text, link, x, y, likes, time, username):
+    query = {"query":"create(v : Video {postID : '" + str(postID) + "', text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", likes: " + str(likes) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def get_all_videos():
@@ -58,7 +58,7 @@ def addData():
         for row in csv_reader:
             print(row)
             postIds.append(row["postId"])
-            create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], 1606886176, row["userName"])
+            create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], random.randint(1, 1000), 1606886176, row["userName"])
 
     for i in range(len(postIds)):
         for j in range(len(postIds)):
