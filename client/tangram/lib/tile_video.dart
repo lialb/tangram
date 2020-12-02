@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:tangram/add_photo_placeholder.dart';
 import 'package:tangram/users_explore.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -51,7 +52,7 @@ class _TileVideoState extends State<TileVideo> {
 
   final titleController = TextEditingController();
   final urlController = TextEditingController();
-  bool isForm = false;
+  bool isForm = true;
 
   @override
   void initState() {
@@ -106,7 +107,21 @@ class _TileVideoState extends State<TileVideo> {
       child: InkWell(
         onTap: () => _controller.play(),
         child: isForm
-            ? buildForm()
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 64.0),
+                child: Builder(
+                  builder: (context) => AddPhotoPlaceholder(
+                    onClick: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Text('Make a post'),
+                                content: buildForm(),
+                              ));
+                    },
+                  ),
+                ),
+              )
             : data == null
                 ? Container()
                 : Stack(
@@ -206,82 +221,83 @@ class _TileVideoState extends State<TileVideo> {
     request.send();
   }
 
-  SafeArea buildForm() {
-    return SafeArea(
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-                controller: titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  hintText: 'An interesting title',
-                  contentPadding:
-                      // TODO: fix alignment
-                      EdgeInsets.only(left: 10, top: 12, bottom: 5),
-                ),
+  Widget buildForm() {
+    return Container(
+      height: 200,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              controller: titleController,
+              decoration: InputDecoration(
+                labelText: 'Title',
+                hintText: 'An interesting title',
+                contentPadding:
+                    // TODO: fix alignment
+                    EdgeInsets.only(left: 10, top: 12, bottom: 5),
               ),
-              TextFormField(
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-                controller: urlController,
-                decoration: InputDecoration(
-                  labelText: 'Youtube link',
-                  hintText: 'link to a video',
-                  contentPadding:
-                      // TODO: fix alignment
-                      EdgeInsets.only(left: 10, top: 12, bottom: 5),
-                ),
+            ),
+            TextFormField(
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              controller: urlController,
+              decoration: InputDecoration(
+                labelText: 'Youtube link',
+                hintText: 'link to a video',
+                contentPadding:
+                    // TODO: fix alignment
+                    EdgeInsets.only(left: 10, top: 12, bottom: 5),
               ),
-              SizedBox(height: 32),
-              FloatingActionButton.extended(
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      // If the form is valid, display a snackbar. In the real world,
-                      // you'd often call a server or save the information in a database.
-                      var url = '$ip/create-post';
-                      http.post(
-                        url,
-                        headers: <String, String>{
-                          'Content-Type': 'application/json; charset=UTF-8',
-                        },
-                        body: jsonEncode(<String, String>{
-                          'text': titleController.text,
-                          'videoURL': urlController.text,
-                          'XCoordinate': widget.x.toString(),
-                          'YCoordinate': widget.y.toString(),
-                          'Username': 'Teddy',
-                          'Timestamp': '1000'
-                        }),
-                      );
-                      getData();
-                      isForm = false;
-                      setState(() {});
-                    }
-                  },
-                  label: Row(
-                    children: [Icon(Icons.file_upload), Text('Post')],
-                  ))
-            ],
-          ),
+            ),
+            SizedBox(height: 32),
+            Row(
+              children: [
+                Spacer(),
+                FloatingActionButton.extended(
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        // If the form is valid, display a snackbar. In the real world,
+                        // you'd often call a server or save the information in a database.
+                        var url = '$ip/create-post';
+                        http.post(
+                          url,
+                          headers: <String, String>{
+                            'Content-Type': 'application/json; charset=UTF-8',
+                          },
+                          body: jsonEncode(<String, String>{
+                            'text': titleController.text,
+                            'videoURL': urlController.text,
+                            'XCoordinate': widget.x.toString(),
+                            'YCoordinate': widget.y.toString(),
+                            'Username': 'Teddy',
+                            'Timestamp': '1000'
+                          }),
+                        );
+                        getData();
+                        isForm = false;
+                        setState(() {});
+                      }
+                    },
+                    label: Row(
+                      children: [Icon(Icons.file_upload), Text('Post')],
+                    )),
+              ],
+            )
+          ],
         ),
       ),
     );

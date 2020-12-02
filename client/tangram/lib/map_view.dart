@@ -51,6 +51,7 @@ class _MapViewState extends State<MapView> {
         onPressed: () {
           setState(() {
             _refresh = !_refresh;
+            buildGrid();
           });
         },
         backgroundColor: _refresh ? Colors.black : Colors.yellow,
@@ -87,41 +88,23 @@ class _MapViewState extends State<MapView> {
     );
   }
 
-  void buildGrid() {
+  void buildGrid() async {
     _grid = [
       Pixel(x: 108, y: 40),
       Pixel(
         x: 107,
         y: 40,
-        color: Colors.yellow.withAlpha(180),
+        intensity: .8,
       ),
       Pixel(x: 8, y: 20)
-      // Pixel(
-      //   x: 107,
-      //   y: 41,
-      //   color: Colors.yellow.withAlpha(230),
-      // ),
-      // Pixel(
-      //   x: 108,
-      //   y: 41,
-      //   color: Colors.yellow.withAlpha(230),
-      // ),
-      // Pixel(
-      //   x: 106,
-      //   y: 41,
-      //   color: Colors.yellow.withAlpha(255),
-      // ),
-      // Pixel(
-      //   x: 107,
-      //   y: 42,
-      //   color: Colors.yellow.withAlpha(100),
-      // ),
     ];
     // for (int i = 0; i < 170; i++) {
     //   for (int j = 0; j < 90; j++) {
     //     _grid.add(Pixel(x: i, y: j));
     //   }
     // }
+
+    _refresh = false;
     setState(() {});
   }
 }
@@ -138,12 +121,15 @@ class Pixel extends StatelessWidget {
   final int x;
   final int y;
 
+  final double intensity;
+
   final Color color;
 
   Pixel({
     this.x = 0,
     this.y = 0,
     this.color = Colors.yellow,
+    this.intensity = 1,
   });
 
   @override
@@ -154,7 +140,9 @@ class Pixel extends StatelessWidget {
       child: Container(
         width: pixelWidth,
         height: pixelHeight,
-        color: color,
+        color: intensity == 1
+            ? color
+            : color.withAlpha((80 + 175 * intensity).round()),
       ),
     );
   }
