@@ -5,8 +5,8 @@ import csv
 
 neo4jSecrets = config.neo4jKey
 
-async def query_neo4j(url, user, password, query):
-    r = await requests.post(url, auth=(user, password), data = query)
+def query_neo4j(url, user, password, query):
+    r = requests.post(url, auth=(user, password), data = query)
     return r.text
 
 def update_video_likes(postID, likes):
@@ -25,13 +25,10 @@ def update_post_coordinates(postID, x, y):
     query = {"query":"match(v : Video {postID = '" + str(postID) +  "'}) set v.coordX = " + str(x) + " set v.coordY = " + str(y)}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-async def create_post(postID, text, link, x, y, likes, time, username):
+def create_post(postID, text, link, x, y, likes, time, username):
     query = {"query":"create(v : Video {postID : '" + str(postID) + "', text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", likes: " + str(likes) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
-    try:
-        await query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
-        return create_relationship(postID)
-    except IOError:
-        pass
+    query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+    return create_relationship(postID)
 
 def get_all_videos():
     query = {"query":"match(v : Video) return v"}
