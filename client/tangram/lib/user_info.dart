@@ -114,8 +114,8 @@ class _UserInfoState extends State<UserInfo> {
                 )
               : Container(height: 48),
         ),
-        SizedBox(
-          height: 40,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 32.0),
           child: edit
               ? TextFormField(
                   // The validator receives the text that the user has entered.
@@ -179,7 +179,7 @@ class _UserInfoState extends State<UserInfo> {
                   style: TextStyle(
                       fontSize: 28,
                       color: Colors.white,
-                      fontWeight: FontWeight.w700),
+                      fontWeight: FontWeight.w300),
                 ),
                 Spacer(),
               ],
@@ -197,12 +197,17 @@ class _UserInfoState extends State<UserInfo> {
             ),
             Spacer(),
             IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => UsersExplore(),
-                  ));
-                },
-                icon: Icon(Icons.add)),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => UsersExplore(),
+                ));
+              },
+              icon: widget.isUser
+                  ? Icon(Icons.add)
+                  : Container(
+                      height: 96,
+                    ),
+            ),
           ],
         ),
       ],
