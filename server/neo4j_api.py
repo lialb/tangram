@@ -25,11 +25,14 @@ def update_post_coordinates(postID, x, y):
     query = {"query":"match(v : Video {postID = '" + str(postID) +  "'}) set v.coordX = " + str(x) + " set v.coordY = " + str(y)}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-def create_post(postID, text, link, x, y, likes, time, username):
+async def create_post(postID, text, link, x, y, likes, time, username):
     query = {"query":"create(v : Video {postID : '" + str(postID) + "', text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", likes: " + str(likes) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
-    create_all_relationships()
-    return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
-
+    try:
+        await query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+    except IOError:
+        pass
+    return create_relationship(postID)
+    
 def get_all_videos():
     query = {"query":"match(v : Video) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
