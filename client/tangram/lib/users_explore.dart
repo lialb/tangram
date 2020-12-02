@@ -97,7 +97,7 @@ class _UsersExploreState extends State<UsersExplore> {
               child: ListView.builder(
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
-                    return UserItem(username: filtered[index].username);
+                    return UserItemAdd(username: filtered[index].username);
                   }),
             ),
           )
@@ -151,7 +151,17 @@ class UserItem extends StatelessWidget {
           color: Colors.red,
           icon: Icons.delete_outline,
           onTap: () {
-            deleteUser(username);
+            var url = '$ip/delete-friend';
+            http.post(
+              url,
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, String>{
+                'user1': 'TheodoreSpeaks',
+                'user2': username,
+              }),
+            );
           },
         )
       ],
@@ -185,6 +195,92 @@ class UserItem extends StatelessWidget {
               Icon(Icons.chevron_right)
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class UserItemAdd extends StatefulWidget {
+  final String username;
+  const UserItemAdd({Key key, this.username}) : super(key: key);
+
+  @override
+  _UserItemAddState createState() => _UserItemAddState();
+}
+
+class _UserItemAddState extends State<UserItemAdd> {
+  bool friend = false;
+
+  Future<void> deleteUser(String username) async {
+    var url = Uri.parse('$ip/delete-user?Username=$username');
+    var request = http.Request("DELETE", url);
+    request.send();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            PageTransition(
+                type: PageTransitionType.fade,
+                child: UserInfo(
+                  username: widget.username,
+                )));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            SizedBox(width: 16.0),
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text(data.name),
+                Text(widget.username),
+              ],
+            )),
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    friend = !friend;
+                  });
+
+                  if (friend) {
+                    var url = '$ip/add-friend';
+                    http.post(
+                      url,
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                      },
+                      body: jsonEncode(<String, String>{
+                        'user1': 'TheodoreSpeaks',
+                        'user2': widget.username,
+                      }),
+                    );
+                  } else {
+                    var url = '$ip/delete-friend';
+                    http.post(
+                      url,
+                      headers: <String, String>{
+                        'Content-Type': 'application/json; charset=UTF-8',
+                      },
+                      body: jsonEncode(<String, String>{
+                        'user1': 'TheodoreSpeaks',
+                        'user2': widget.username,
+                      }),
+                    );
+                  }
+                },
+                icon: Icon(friend ? Icons.check : Icons.add))
+          ],
         ),
       ),
     );

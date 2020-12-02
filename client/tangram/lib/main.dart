@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
     MapView(),
     // TileView(),
     UserInfo(
-      username: 'cKKe',
+      username: 'TheodoreSpeaks',
       isUser: true,
     ),
   ];
