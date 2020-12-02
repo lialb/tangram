@@ -28,9 +28,13 @@ class _MapViewState extends State<MapView> {
     int coordX = ((tapX - Pixel.left) / (Pixel.pixelWidth + .5)).floor();
     int coordY = ((tapY - Pixel.top) / (Pixel.pixelHeight + .5)).floor();
 
-    print('$coordX $coordY');
+    print('Coordinate: $coordX $coordY');
 
-    // Navigator.of(context).push(ScaleRoute(page: TileView()));
+    Navigator.of(context).push(ScaleRoute(
+        page: TileView(
+      initialX: coordX,
+      initialY: coordY,
+    )));
   }
 
   @override
