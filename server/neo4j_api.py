@@ -65,11 +65,11 @@ def addData():
                 continue
             create_relationship(postIds[i], postIds[j])
 
-print(create_relationship(1, 2))
-for i in range(1, 110):
-    for j in range(1, 110):
-        if i == j:
-            continue
-        print(i, j)
-        create_relationship(i, j)
-        
+# print(create_relationship(1, 2))
+# for i in range(1, 110):
+#     for j in range(1, 110):
+#         if i == j:
+#             continue
+#         print(i, j)
+#         create_relationship(i, j)
+#         
