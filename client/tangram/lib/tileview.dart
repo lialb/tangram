@@ -15,12 +15,7 @@ class TileView extends StatefulWidget {
 enum Direction { CENTER, LEFT, RIGHT, UP, DOWN }
 
 class _TileViewState extends State<TileView> with TickerProviderStateMixin {
-  Widget _current // = TileVideo();
-      = Container(
-    width: double.infinity,
-    height: double.infinity,
-    color: Colors.red[100],
-  );
+  Widget _current;
 
   int x = 0;
   int y = 0;
@@ -121,8 +116,13 @@ class _TileViewState extends State<TileView> with TickerProviderStateMixin {
           ));
 
           // _current = TileVideo(x: x, y: y);
-          _current = FadeTransition(
-              opacity: _fadeAnimation, child: TileVideo(x: x, y: y));
+          _current = Stack(
+            children: [
+              placeholder,
+              FadeTransition(
+                  opacity: _fadeAnimation, child: TileVideo(x: x, y: y)),
+            ],
+          );
 
           print("$x $y");
         });
@@ -182,5 +182,7 @@ class _TileViewState extends State<TileView> with TickerProviderStateMixin {
 
     x = widget.initialX;
     y = widget.initialY;
+
+    _current = TileVideo(x: widget.initialX, y: widget.initialY);
   }
 }

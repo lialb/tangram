@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 import 'constants.dart';
+import 'map_view.dart';
 
 class UserInfo extends StatefulWidget {
   // final UserData data;
@@ -139,7 +140,24 @@ class _UserInfoState extends State<UserInfo> {
                 ),
         ),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Scaffold(
+                bottomNavigationBar: BottomNavigationBar(
+                  currentIndex: 1,
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.dashboard), title: Text('Explore')),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.person), title: Text('Profile')),
+                  ],
+                ),
+                body: MapView(
+                  usernameHighlight: widget.username,
+                ),
+              ),
+            ));
+          },
           child: Container(
             padding: const EdgeInsets.all(8.0),
             margin: const EdgeInsets.symmetric(horizontal: 64.0),
@@ -224,6 +242,15 @@ class ProfileHeader extends StatelessWidget {
               ),
               Row(
                 children: [
+                  Navigator.of(context).canPop()
+                      ? IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Container(),
                   Spacer(),
                   edit,
                 ],

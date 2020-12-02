@@ -29,7 +29,7 @@ class PostData {
   PostData.fromJson(Map<String, dynamic> json)
       : title = json['data'][0][0]['data']['text'],
         likes = json['data'][0][0]['data']['likes'],
-        username = json['data'][0][0]['data']['userName'],
+        username = json['data'][0][0]['data']['Username'],
         video = json['data'][0][0]['data']['link'],
         postID = json['data'][0][0]['data']['postID'];
 }
@@ -52,7 +52,7 @@ class _TileVideoState extends State<TileVideo> {
 
   final titleController = TextEditingController();
   final urlController = TextEditingController();
-  bool isForm = true;
+  bool isForm = false;
 
   @override
   void initState() {
@@ -63,162 +63,199 @@ class _TileVideoState extends State<TileVideo> {
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    if (_controller != null) {
+      _controller.dispose();
+    }
   }
 
   Future<void> getData() async {
-    // var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
-    // print(url);
+    var url = '$ip/get-post-by-coordinates/${widget.x}/${widget.y}';
+    print(url);
 
-    // // Await the http get response, then decode the json-formatted response.
-    // var response = await http.get(url);
-    // if (response.statusCode == 200) {
-    //   var jsonResponse = convert.jsonDecode(response.body);
-    try {
-      // data = PostData.fromJson(jsonResponse);
-      data = PostData();
+    // Await the http get response, then decode the json-formatted response.
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body);
+      try {
+        data = PostData.fromJson(jsonResponse);
+        // data = PostData();
 
-      _controller = YoutubePlayerController(
-        initialVideoId: YoutubePlayer.convertUrlToId(data.video),
-        flags: YoutubePlayerFlags(
-            enableCaption: false,
-            controlsVisibleAtStart: false,
-            autoPlay: true,
-            mute: false,
-            disableDragSeek: true),
-      );
+        _controller = YoutubePlayerController(
+          initialVideoId: YoutubePlayer.convertUrlToId(data.video),
+          flags: YoutubePlayerFlags(
+              enableCaption: false,
+              controlsVisibleAtStart: false,
+              autoPlay: true,
+              mute: false,
+              disableDragSeek: true),
+        );
+      } on RangeError {
+        isForm = true;
+      }
+      if (this.mounted) {
+        setState(() {});
+      }
+      // var itemCount = jsonResponse['totalItems'];
+      // print('Number of books about http: $itemCount.');
+      // } else {
+      //   print('Request failed with status: ${response.statusCode}.');
       // }
-    } on RangeError {
-      isForm = true;
     }
-    setState(() {});
-    // var itemCount = jsonResponse['totalItems'];
-    // print('Number of books about http: $itemCount.');
-    // } else {
-    //   print('Request failed with status: ${response.statusCode}.');
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: InkWell(
-        onTap: () => _controller.play(),
-        child: isForm
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 64.0),
-                child: Builder(
-                  builder: (context) => AddPhotoPlaceholder(
-                    onClick: () {
-                      showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                                title: Text('Make a post'),
-                                content: buildForm(),
-                              ));
-                    },
+    return SafeArea(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: InkWell(
+          onTap: () => _controller.play(),
+          child: isForm
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 64.0),
+                  child: Builder(
+                    builder: (context) => AddPhotoPlaceholder(
+                      onClick: () {
+                        showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: Text('Make a post'),
+                                  content: buildForm(),
+                                ));
+                      },
+                    ),
                   ),
-                ),
-              )
-            : data == null
-                ? Container()
-                : Stack(
-                    children: [
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        child: YoutubePlayer(
-                            controller: _controller,
-                            aspectRatio: MediaQuery.of(context).size.width /
-                                MediaQuery.of(context).size.height),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        child: Container(
-                          height: 160,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [Colors.transparent, Colors.black],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter),
+                )
+              : data == null
+                  ? Container()
+                  : Stack(
+                      children: [
+                        Positioned(
+                          left: 0,
+                          top: 0,
+                          child: YoutubePlayer(
+                              controller: _controller,
+                              aspectRatio: MediaQuery.of(context).size.width /
+                                  MediaQuery.of(context).size.height),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          child: Container(
+                            height: 160,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: [Colors.transparent, Colors.black],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
+                            ),
                           ),
                         ),
-                      ),
-                      // Positioned(
-                      //     right: 16,
-                      //     top: 64,
-                      //     child: IconButton(
-                      //       icon: Icon(Icons.people, color: Colors.white),
-                      //       onPressed: () => Navigator.push(
-                      //           context,
-                      //           PageTransition(
-                      //               type: PageTransitionType.fade,
-                      //               child: UsersExplore())),
-                      //     )),
-                      Positioned(
-                        bottom: 16,
-                        left: 16,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(data.title,
-                                        style: TextStyle(color: Colors.white)),
-                                    Text('@${data.username}',
-                                        style: TextStyle(color: Colors.white)),
-                                  ],
+                        // Positioned(
+                        //     right: 16,
+                        //     top: 64,
+                        //     child: IconButton(
+                        //       icon: Icon(Icons.people, color: Colors.white),
+                        //       onPressed: () => Navigator.push(
+                        //           context,
+                        //           PageTransition(
+                        //               type: PageTransitionType.fade,
+                        //               child: UsersExplore())),
+                        //     )),
+                        Positioned(
+                          bottom: 16,
+                          left: 16,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(data.title,
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      Text('@${data.username}',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                  '${(data.likes == null ? 0 : data.likes) + (_liked ? 1 : 0)}',
-                                  style: TextStyle(color: Colors.white)),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 32.0),
-                                child: IconButton(
-                                    onPressed: () =>
-                                        setState(() => _liked = !_liked),
-                                    icon: Icon(
-                                        _liked
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: _liked
-                                            ? Colors.red
-                                            : Colors.white)),
-                              )
-                            ],
+                                Text(
+                                    '${(data.likes == null ? 0 : data.likes) + (_liked ? 1 : 0)}',
+                                    style: TextStyle(color: Colors.white)),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 32.0),
+                                  child: IconButton(
+                                      onPressed: () =>
+                                          setState(() => _liked = !_liked),
+                                      icon: Icon(
+                                          _liked
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: _liked
+                                              ? Colors.red
+                                              : Colors.white)),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      // Positioned(
-                      //     left: 16,
-                      //     top: 64,
-                      //     child: IconButton(
-                      //         icon: Icon(Icons.delete, color: Colors.white),
-                      //         onPressed: () {
-                      //           print(data.postID);
-                      //           deletePost(data.postID);
-                      //           setState(() {
-                      //             isForm = true;
-                      //           });
-                      //         })),
-                    ],
-                  ),
+                        Positioned(
+                            right: 16,
+                            top: 16,
+                            child: PopupMenuButton(
+                              onSelected: _select,
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      Icon(Icons.delete),
+                                      SizedBox(
+                                        width: 8.0,
+                                      ),
+                                      Text('Remove'),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ))
+                        // child: IconButton(
+                        //     icon:
+                        //         Icon(Icons.more_vert, color: Colors.white),
+                        //     onPressed: () {
+                        //       print(data.postID);
+                        //       deletePost(data.postID);
+                        //       setState(() {
+                        //         isForm = true;
+                        //       });
+                        //     })),
+                      ],
+                    ),
+        ),
       ),
     );
+  }
+
+  void _select(dynamic choice) {
+    deletePost(data.postID);
   }
 
   Future<void> deletePost(String username) async {
     var url = Uri.parse('$ip/delete-post/$username');
     var request = http.Request("DELETE", url);
     request.send();
+    setState(() {
+      isForm = true;
+    });
   }
 
   Widget buildForm() {
@@ -283,13 +320,16 @@ class _TileVideoState extends State<TileVideo> {
                             'videoURL': urlController.text,
                             'XCoordinate': widget.x.toString(),
                             'YCoordinate': widget.y.toString(),
-                            'Username': 'Teddy',
+                            'Username': 'TheodoreSpeaks',
                             'Timestamp': '1000'
                           }),
                         );
                         getData();
                         isForm = false;
-                        setState(() {});
+                        if (this.mounted) setState(() {});
+                        Navigator.pop(context);
+                        isForm = false;
+                        getData();
                       }
                     },
                     label: Row(

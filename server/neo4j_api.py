@@ -14,7 +14,7 @@ def update_video_likes(postID, likes):
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def delete_post(postID):
-    query = {"query":"match(v : Video {postID = '" + str(postID) +  "'}) detach delete v"}
+    query = {"query":"match(v : Video {postID : '" + str(postID) +  "'}) detach delete v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
     
 def update_title(postID, title):
