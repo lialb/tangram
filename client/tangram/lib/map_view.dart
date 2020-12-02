@@ -9,6 +9,10 @@ import 'dart:convert' as convert;
 import 'constants.dart';
 
 class MapView extends StatefulWidget {
+  final String usernameHighlight;
+
+  MapView({this.usernameHighlight});
+
   @override
   _MapViewState createState() => _MapViewState();
 }
@@ -94,7 +98,9 @@ class _MapViewState extends State<MapView> {
   }
 
   void buildGrid() async {
-    var url = '$ip/get-heat-map';
+    var url = widget.usernameHighlight == null
+        ? '$ip/get-heat-map'
+        : '$ip/get-user-heat-map/${widget.usernameHighlight}';
 
     _grid = [];
 
@@ -109,11 +115,19 @@ class _MapViewState extends State<MapView> {
         for (int j = 0; j < arr[i].length; ++j) {
           double intensity = arr[i][j];
           if (intensity != 0) {
-            _grid.add(Pixel(
-              x: i,
-              y: j,
-              intensity: intensity,
-            ));
+            if (intensity > 0)
+              _grid.add(Pixel(
+                x: i,
+                y: j,
+                intensity: intensity,
+              ));
+            else
+              _grid.add(Pixel(
+                x: i,
+                y: j,
+                intensity: intensity,
+                color: Colors.blue,
+              ));
           }
         }
       }

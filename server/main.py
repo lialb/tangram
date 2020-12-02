@@ -313,7 +313,7 @@ def createPost():
     TimeStamp = request.get_json()['Timestamp']
     username = request.get_json()['Username']
 
-    result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, TimeStamp, username)
+    result = neo4j_api.create_post(postID, text, videoURL, XCoordinate, YCoordinate, 1, TimeStamp, username)
     return json.dumps([{'Status' : result }])
 
 @app.route('/delete-post/<string:PostID>', methods=['DELETE'])
