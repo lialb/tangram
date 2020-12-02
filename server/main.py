@@ -376,12 +376,9 @@ def getHeatMapHelper(username=None):
         y = data['coordY']
         likes = data['likes']
         total += likes ** 2
-        grid[y][x] = likes
-        if username:
-            if 'userName' in data and data['userName'] == username:
-                grid[y][x] *= -1
-            elif 'Username' in data and data['Username'] == username:
-                grid[y][x] *= -1
+        grid[x][y] = likes
+        if username and 'Username' in data and data['Username'] == username:
+            grid[x][y] *= -1
     if total == 0:
         return 
     magnitude = total ** .5
