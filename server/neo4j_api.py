@@ -42,22 +42,30 @@ def get_video_by_coordinates(x, y):
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def create_relationship(a, b):
-    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordY - b.coordY == 1 OR b.coordY - a.coordY == 1) AND (a.coordX - b.coordX == 1 OR b.coordX - a.coordX == 1) create (a)-[:adjacent]->(b) return a,b"}
+    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)-[:adjacent]-(b) return a,b"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def addData():
     postIds = []
-    with open("./videos.csv", mode = "r") as csv_file:
+    with open("../videos.csv", mode = "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         next(csv_reader)
         for row in csv_reader:
+            print(row)
             postIds.append(row["postId"])
             create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], 1606886176, row["userName"])
 
-    for i in len(postIds):
-        for j in len(postIds):
+    for i in range(len(postIds)):
+        for j in range(len(postIds)):
             if i == j:
                 continue
             create_relationship(postIds[i], postIds[j])
 
-addData()
+print(create_relationship(1, 2))
+for i in range(1, 110):
+    for j in range(1, 110):
+        if i == j:
+            continue
+        print(i, j)
+        create_relationship(i, j)
+        
