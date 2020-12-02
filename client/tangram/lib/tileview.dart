@@ -121,8 +121,13 @@ class _TileViewState extends State<TileView> with TickerProviderStateMixin {
           ));
 
           // _current = TileVideo(x: x, y: y);
-          _current = FadeTransition(
-              opacity: _fadeAnimation, child: TileVideo(x: x, y: y));
+          _current = Stack(
+            children: [
+              placeholder,
+              FadeTransition(
+                  opacity: _fadeAnimation, child: TileVideo(x: x, y: y)),
+            ],
+          );
 
           print("$x $y");
         });

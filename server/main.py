@@ -367,7 +367,7 @@ def getHeatMapHelper(username=None):
 
     videos = json.loads(neo4j_api.get_all_videos())['data']
     
-    total = 0
+    max_likes = 1
     for vid in videos:
         data = vid[0]['data']
         if 'likes' not in data:
@@ -375,16 +375,14 @@ def getHeatMapHelper(username=None):
         x = data['coordX']
         y = data['coordY']
         likes = data['likes']
-        total += likes ** 2
+        max_likes = max(max_likes, likes)
         grid[x][y] = likes
         if username and 'Username' in data and data['Username'] == username:
             grid[x][y] *= -1
-    if total == 0:
-        return 
-    magnitude = total ** .5
+
     for i in range(len(grid)):
         for j in range(len(grid[i])):
-            grid[i][j] /= magnitude
+            grid[i][j] /= max_likes
 
     return json.dumps(grid)
 

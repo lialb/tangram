@@ -224,6 +224,15 @@ class ProfileHeader extends StatelessWidget {
               ),
               Row(
                 children: [
+                  Navigator.of(context).canPop()
+                      ? IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Container(),
                   Spacer(),
                   edit,
                 ],

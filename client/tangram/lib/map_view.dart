@@ -3,6 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tangram/scale_transition.dart';
 import 'package:tangram/tileview.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+
+import 'constants.dart';
+
 class MapView extends StatefulWidget {
   @override
   _MapViewState createState() => _MapViewState();
@@ -89,20 +94,30 @@ class _MapViewState extends State<MapView> {
   }
 
   void buildGrid() async {
-    _grid = [
-      Pixel(x: 108, y: 40),
-      Pixel(
-        x: 107,
-        y: 40,
-        intensity: .8,
-      ),
-      Pixel(x: 8, y: 20)
-    ];
-    // for (int i = 0; i < 170; i++) {
-    //   for (int j = 0; j < 90; j++) {
-    //     _grid.add(Pixel(x: i, y: j));
-    //   }
-    // }
+    var url = '$ip/get-heat-map';
+
+    _grid = [];
+
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = convert.jsonDecode(response.body);
+      List<List<double>> arr = List<List<double>>.from(jsonResponse
+          .map((x) => List<double>.from(x.map((x) => x.toDouble()))));
+
+      print(arr[0][0]);
+      for (int i = 0; i < arr.length; i++) {
+        for (int j = 0; j < arr[i].length; ++j) {
+          double intensity = arr[i][j];
+          if (intensity != 0) {
+            _grid.add(Pixel(
+              x: i,
+              y: j,
+              intensity: intensity,
+            ));
+          }
+        }
+      }
+    }
 
     _refresh = false;
     setState(() {});

@@ -52,7 +52,7 @@ class _TileVideoState extends State<TileVideo> {
 
   final titleController = TextEditingController();
   final urlController = TextEditingController();
-  bool isForm = true;
+  bool isForm = false;
 
   @override
   void initState() {
