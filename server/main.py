@@ -379,8 +379,8 @@ def getHeatMapHelper(username=None):
         grid[x][y] = likes
         if username and 'Username' in data and data['Username'] == username:
             grid[x][y] *= -1
-    if total == 0:
-        return 
+    if total == 0: # no videos
+        return json.dumps(grid) 
     magnitude = total ** .5
     for i in range(len(grid)):
         for j in range(len(grid[i])):
