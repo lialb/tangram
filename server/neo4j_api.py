@@ -27,6 +27,7 @@ def update_post_coordinates(postID, x, y):
 
 def create_post(postID, text, link, x, y, likes, time, username):
     query = {"query":"create(v : Video {postID : '" + str(postID) + "', text : '" + str(text) + "', link : '" + str(link) + "', coordX : " + str(x) + ", coordY : " + str(y) + ", likes: " + str(likes) + ", time : " + str(time) + ", Username : '" + str(username) + "'})"}
+    create_relationship()
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def get_all_videos():
@@ -41,11 +42,11 @@ def get_video_by_coordinates(x, y):
     query = {"query" : "match(v : Video{coordX : " + str(x) + ", coordY : " + str(y) + "}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
-def create_relationship(a, b):
-    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)-[:adjacent]->(b) return a,b"}
-    query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
-    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)<-[:adjacent]-(b) return a,b"}
+def create_relationship():
+    # query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' AND (a.coordX=b.coordX AND (a.coordY - b.coordY = 1 OR b.coordY - a.coordY = 1)) AND (a.coordY = b.coordY AND (a.coordX - b.coordX = 1 OR b.coordX - a.coordX = 1)) create (a)-[:adjacent]->(b) return a,b"}
+    query = {"query": "match(a:Video),(b:Video) where ((a.coordX=b.coordX AND abs(a.coordY - b.coordY) = 1) OR (a.coordY = b.coordY AND abs(a.coordX - b.coordX) = 1)) create (a)-[:adjacent]->(b) return a,b"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+
 def delete_all_posts():
     query = {"query":"match(n) DETACH DELETE n"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
@@ -62,23 +63,7 @@ def addData():
             postIds.append(row["postId"])
             create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], random.randint(1, 1000), 1606886176, usernames[i % len(usernames)])
             i += 1
-            # break
-
-    # for i in range(len(postIds)):
-    #     for j in range(len(postIds)):
-    #         if i == j:
-    #             continue
-    #         create_relationship(postIds[i], postIds[j])
+    create_relationship()
 
 # delete_all_posts()
 # addData()
-
-
-# print(create_relationship(1, 2))
-# for i in range(1, 110):
-#     for j in range(1, 110):
-#         if i == j:
-#             continue
-#         print(i, j)
-#         create_relationship(i, j)
-#         
