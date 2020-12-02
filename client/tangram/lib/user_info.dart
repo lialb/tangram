@@ -50,7 +50,7 @@ class _UserInfoState extends State<UserInfo> {
     getData();
   }
 
-  void getData() async {
+  Future<void> getData() async {
     data = UserData();
     print('here');
     var url = '$ip/get-user/${widget.username}';
@@ -79,14 +79,17 @@ class _UserInfoState extends State<UserInfo> {
 
         //   ],
         // ),
-        body: ListView.builder(
-      itemCount: data.friends.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return buildListWidget(context);
-        }
-        return UserItem(username: data.friends[index - 1]);
-      },
+        body: RefreshIndicator(
+      onRefresh: getData,
+      child: ListView.builder(
+        itemCount: data.friends.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return buildListWidget(context);
+          }
+          return UserItem(username: data.friends[index - 1]);
+        },
+      ),
     ));
   }
 
