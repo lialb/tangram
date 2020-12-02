@@ -202,6 +202,12 @@ def deleteFriend():
     user2 = request.get_json()['user2']
     user1 = str(user1)
     user2 = str(user2)
+
+    if(user1 > user2):
+        temp = user1
+        user1 = user2
+        user2 = temp
+
     cur = connection.cursor()
     try:
         cur.execute("DELETE FROM tangram_friends where user1 = '{}' AND user2 = '{}'".format(user1, user2))
