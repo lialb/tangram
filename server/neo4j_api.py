@@ -38,3 +38,7 @@ def get_specific_video(postID):
 def get_video_by_coordinates(x, y):
     query = {"query" : "match(v : Video{coordX : " + str(x) + ", coordY : " + str(y) + "}) return v"}
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
+
+def create_relationship(a, b):
+    query = {"query":"match(a:Video),(b:Video) where a.postID = '" + str(a) + "' AND b.postID = '" + str(b) + "' create (a)-[:adjacent]->(b) return a,b"}
+    return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
