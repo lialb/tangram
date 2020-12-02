@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:tangram/add_photo_placeholder.dart';
+import 'package:tangram/user_info.dart';
 import 'package:tangram/users_explore.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -172,17 +173,27 @@ class _TileVideoState extends State<TileVideo> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(data.title,
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                      Text('@${data.username}',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ],
+                                  child: InkWell(
+                                    onTap: () => Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => UserInfo(
+                                        username: data.username,
+                                        isUser:
+                                            data.username == 'TheodoreSpeaks',
+                                      ),
+                                    )),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(data.title,
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                        Text('@${data.username}',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Text(
