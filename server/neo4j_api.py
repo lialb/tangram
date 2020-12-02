@@ -46,6 +46,7 @@ def create_relationship(a, b):
     return query_neo4j(neo4jSecrets['url'], neo4jSecrets['user'], neo4jSecrets['password'], query)
 
 def addData():
+    postIds = []
     with open("../videos.csv", mode = "r") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         b = False
@@ -53,5 +54,10 @@ def addData():
             if (b == False):
                 b = True
                 continue
+            postIds.append(row["postId"])
             create_post(create_post(row["postId"], row["text"], row["link"], row["coordX"], row["coordY"], 1606886176, row["userName"]))
-    
+    for i in len(postIds):
+        for j in len(postIds):
+            if i == j:
+                continue
+            create_relationship(postIds[i], postIds[j])
