@@ -15,3 +15,12 @@ Tech Stack:
 Databases:
   * Neo4j - Store posts for the map
   * MySQL - User data
+
+
+![map](./screenshots/map.png)
+
+![illinois](./screenshots/illinois.png)
+
+![new_post](./screenshots/new_post.png)
+
+![input](./screenshots/new_post.png)
