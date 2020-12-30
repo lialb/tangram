@@ -23,4 +23,4 @@ Databases:
 
 ![new_post](./screenshots/new_post.png)
 
-![input](./screenshots/new_post.png)
+![input](./screenshots/input.png)
