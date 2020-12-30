@@ -13,7 +13,7 @@ Tech Stack:
 * AWS - Hosts MySQL and Neo4j databases
 
 Databases:
-  * Neo4j - Store posts for the map
+  * Neo4j - Store posts and adjacency relationships for the map
   * MySQL - User data
 
 
